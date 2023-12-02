@@ -16,6 +16,7 @@ import android.graphics.drawable.ColorDrawable;
 //noinspection ExifInterface
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -55,6 +56,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 
@@ -137,7 +139,7 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
             else{
                 sortType = "Name";
             item.setTitle("Sắp xếp theo thời gian");}
-            sortImage();
+            new SortImageTask().execute();
             notifyChangeGridLayout();
         } else if (item.getItemId() == R.id.item_setting) {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -407,34 +409,81 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
                 }
             }
         }
-        sortImage();
+//        sortImage();
     }
 
-    private void sortImage() {
-        if (sortType.equals("Date")) {
-            for (int i = 0; i < images.size(); i++) {
-                for (int j = i + 1; j < images.size(); j++) {
-                    File file1 = new File(images.get(i));
-                    File file2 = new File(images.get(j));
-                    if (file1.exists() && file2.exists()) {
-                        if (file1.lastModified() < file2.lastModified()) {
-                            Collections.swap(images, i, j);
-                        }
-                    }
+    private void mergeSort(ArrayList<String> arr, int l, int r, Comparator<File> comparator) {
+        if (l < r) {
+            int m = (l + r) / 2;
+            mergeSort(arr, l, m, comparator);
+            mergeSort(arr, m + 1, r, comparator);
+            merge(arr, l, m, r, comparator);
+        }
+    }
+    private void merge(ArrayList<String> arr, int l, int m, int r, Comparator<File> comparator) {
+        int n1 = m - l + 1;
+        int n2 = r - m;
+        ArrayList<String> L = new ArrayList<>();
+        ArrayList<String> R = new ArrayList<>();
+        for (int i = 0; i < n1; ++i)
+            L.add(arr.get(l + i));
+        for (int j = 0; j < n2; ++j)
+            R.add(arr.get(m + 1 + j));
+        int i = 0, j = 0;
+        int k = l;
+        while (i < n1 && j < n2) {
+
+            File file1 = new File(L.get(i));
+            File file2 = new File(R.get(j));
+            if (file1.exists() && file2.exists()) {
+                if (comparator.compare(file1, file2) <= 0) {
+                    arr.set(k, L.get(i));
+                    i++;
+                } else {
+                    arr.set(k, R.get(j));
+                    j++;
                 }
             }
-        } else if (sortType.equals("Name")) {
-            for (int i = 0; i < images.size(); i++) {
-                for (int j = i + 1; j < images.size(); j++) {
-                    File file1 = new File(images.get(i));
-                    File file2 = new File(images.get(j));
-                    if (file1.exists() && file2.exists()) {
-                        if (getDisplayName(images.get(i)).compareTo(getDisplayName(images.get(j))) > 0) {
-                            Collections.swap(images, i, j);
-                        }
+            k++;
+        }
+        while (i < n1) {
+            arr.set(k, L.get(i));
+            i++;
+            k++;
+        }
+        while (j < n2) {
+            arr.set(k, R.get(j));
+            j++;
+            k++;
+        }
+    }
+
+
+    private class SortImageTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (sortType.equals("Date")) {
+                mergeSort(images, 0, images.size() - 1, new Comparator<File>() {
+                    @Override
+                    public int compare(File file, File t1) {
+                        return Long.compare(t1.lastModified(), file.lastModified());
                     }
-                }
+                });
+            } else if (sortType.equals("Name")) {
+                mergeSort(images, 0, images.size() - 1, new Comparator<File>() {
+                    @Override
+                    public int compare(File file, File t1) {
+                        return file.getName().compareTo(t1.getName());
+                    }
+                });
             }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            notifyChangeGridLayout();
         }
     }
 

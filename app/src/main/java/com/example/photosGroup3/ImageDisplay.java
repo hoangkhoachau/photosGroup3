@@ -291,7 +291,7 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
             }
 
             if (fileName.length() == 0) {
-                fileName = (new Date()).getTime() + "";
+                fileName = String.valueOf((new Date()).getTime());
 
             }
             fullNameFile = ((MainActivity) requireContext()).getPictureDirectory() + "/" + fileName + fileExtension;

@@ -65,7 +65,7 @@ public class BlurEditorFragment extends Fragment {
             @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                text.setText("" + i);
+                text.setText(String.valueOf(i));
                 blurredImage = main.blurFast(i);
             }
 

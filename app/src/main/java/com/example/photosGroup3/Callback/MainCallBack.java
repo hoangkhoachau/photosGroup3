@@ -26,7 +26,6 @@ public interface MainCallBack {
     void clearChooseToDeleteInList();
     void addImageUpdate(String[] input);
 
-    void readAgain();
     void shareImages(ArrayList<String> paths);
     boolean getIsDark();
     void setIsDark(boolean status);

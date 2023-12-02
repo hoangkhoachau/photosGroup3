@@ -1,18 +1,18 @@
 package com.example.photosGroup3.Callback;
 
 public interface ISelectedPicture {
-    public void preventSwipe();
-    public void allowSwipe();
+    void preventSwipe();
+    void allowSwipe();
 
-    public void setCurrentSelectedName(String name);
-    public void setCurrentPosition(int pos);
+    void setCurrentSelectedName(String name);
+    void setCurrentPosition(int pos);
 
-    public void removeImageUpdate(String input);
+    void removeImageUpdate(String input);
 
-    public void showNav();
-    public void hiddenNav();
+    void showNav();
+    void hiddenNav();
 
-    public void notifyChanged();
+    void notifyChanged();
 
 
 }

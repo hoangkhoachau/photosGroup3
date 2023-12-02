@@ -1,9 +1,9 @@
 package com.example.photosGroup3.Callback;
 
 public interface chooseAndDelete {
-    public  void deleteClicked();
-    public  void deleteClicked(String file);
-    public  void clearClicked();
-    public void selectAllClicked();
-    public void renameClicked(String file, String newFile);
+    void deleteClicked();
+    void deleteClicked(String file);
+    void clearClicked();
+    void selectAllClicked();
+    void renameClicked(String file, String newFile);
     }

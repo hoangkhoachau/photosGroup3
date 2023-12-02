@@ -3,14 +3,14 @@ package com.example.photosGroup3.Callback;
 import android.graphics.Bitmap;
 
 public interface EditImageCallbacks {
-    public void TransformVertical();
-    public void TransformHorizontal();
+    void TransformVertical();
+    void TransformHorizontal();
 
-    public void BackFragment();
-    public Bitmap blurFast(int radius);
-    public void ConfirmBlur(Bitmap input);
-    public void BitmapFilterChoose(Bitmap input,String name);
+    void BackFragment();
+    Bitmap blurFast(int radius);
+    void ConfirmBlur(Bitmap input);
+    void BitmapFilterChoose(Bitmap input,String name);
 
-    public void recreateOnDarkMode();
+    void recreateOnDarkMode();
 
 }

@@ -83,7 +83,7 @@ public class SlideShow extends AppCompatActivity {
                     if(intf == null)
                     {
                         Date lastModDate = new Date(file.lastModified());
-                        Log.i("PHOTO DATE", "Dated : "+ lastModDate.toString());//Dispaly lastModDate. You can do/use it your own way
+                        Log.i("PHOTO DATE", "Dated : "+ lastModDate);//Dispaly lastModDate. You can do/use it your own way
                     }
                 }
             }

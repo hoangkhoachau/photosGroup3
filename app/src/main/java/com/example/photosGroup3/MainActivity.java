@@ -30,7 +30,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -47,6 +47,7 @@ import com.example.photosGroup3.Callback.MainCallBack;
 import com.example.photosGroup3.Utils.ImageDelete;
 import com.example.photosGroup3.Utils.SlideShow;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -218,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     }
 
 
-
     @SuppressLint("UseCompatLoadingForDrawables")
     private void showSliderDialogBox() {
         final Dialog customDialog = new Dialog(mainActivity);
@@ -294,8 +294,10 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
                 askForPermissions();
 
-                readFolder(Picture);
-                readFolder(DCIM);
+                ReadFolderTask readPicture = new ReadFolderTask();
+                ReadFolderTask readDCIM = new ReadFolderTask();
+                readPicture.execute(Picture);
+                readDCIM.execute(DCIM);
 
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
@@ -339,11 +341,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
     @Override
     public void addImageUpdate(String[] input) {
-        for (String name : input) {
-            filterImage(name);
-
-        }
-
+        Collections.addAll(FileInPaths, input);
     }
 
     @Override
@@ -373,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     @Override
     public void SelectedTextChange() {
 
-        deleteNotify = chooseToDeleteInList.size()+ "";
+        deleteNotify = String.valueOf(chooseToDeleteInList.size());
         informationSelected.setText(chooseToDeleteInList.size() + " images selected");
     }
 
@@ -408,46 +406,47 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     }
 
 
-    public void filterImage(String name) {
-        FileInPaths.add(name);
-    }
+    public class ReadFolderTask extends AsyncTask<String, Void, Void> {
 
-    private void readFolder(String Dir) {
-
-
-        File sdFile = new File(Dir);
-
-        File[] foldersSD = sdFile.listFiles();
-
-        try {
-            assert foldersSD != null;
-            for (File file : foldersSD) {
-                if (file.isDirectory()) {
-                    if (file.getName().equals("Albums")) {
-                        continue;
-                    }
-                    //get absolute
-                    //do nothing
-                    readFolder(file.getAbsolutePath());
-
-                } else {
-                    for (String extension : ImageExtensions) {
-                        if (file.getAbsolutePath().toLowerCase().endsWith(extension)) {
-                            if (!FileInPaths.contains(file.getAbsolutePath()))
-                                filterImage(file.getAbsolutePath());
-
-                            break;
-                        }
-
-                    }
-                }
-            }
-
-        } catch (Exception ignored) {
+        @Override
+        protected Void doInBackground(String... params) {
+            String dir = params[0];
+            readFolderAsync(dir);
+            return null;
         }
 
-    }
+        private void readFolderAsync(String dir) {
+            File sdFile = new File(dir);
+            File[] foldersSD = sdFile.listFiles();
 
+            try {
+                assert foldersSD != null;
+                for (File file : foldersSD) {
+                    if (file.isDirectory()) {
+                        if (file.getName().equals("Albums")) {
+                            continue;
+                        }
+                        // Use AsyncTask for the recursive call
+                        ReadFolderTask readFolderTask = new ReadFolderTask();
+                        readFolderTask.execute(file.getAbsolutePath());
+                    } else {
+                        for (String extension : ImageExtensions) {
+                            if (file.getAbsolutePath().toLowerCase().endsWith(extension)) {
+                                if (!FileInPaths.contains(file.getAbsolutePath()))
+                                    FileInPaths.add(file.getAbsolutePath());
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        // Optionally, you can override onPreExecute and onPostExecute
+        // to perform operations on the UI thread before and after the background task.
+    }
 
     private void changeFileInFolder(String Dir, String oldName, String newName) {
 
@@ -518,13 +517,6 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     }
 
     @Override
-    public void readAgain() {
-
-        readFolder(Picture);
-        readFolder(DCIM);
-    }
-
-    @Override
     public ArrayList<String> getFolderPath() {
         return folderPaths;
     }
@@ -543,7 +535,6 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     public ArrayList<String> getFileinDir() {
         return FileInPaths;
     }
-
 
 
     public void askForPermissions() {
@@ -807,6 +798,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                 }
                 return view;
             }
+
             private class ViewHolder {
                 TextView albumName;
                 TextView albumImageCount;

@@ -554,7 +554,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
                 .setOnClickListener(view -> {
                     ImageDisplay ic = ImageDisplay.getInstance();
                     EditText editText = customDialog.findViewById(R.id.editChangeFileName);
-                    if (!isFileName(editText.getText() + "")) {
+                    if (!isFileName(String.valueOf(editText.getText()))) {
                         customDialog.findViewById(R.id.errorName).setVisibility(View.VISIBLE);
                     } else {
                         String fileExtension = imagesPath.get(currentPosition).substring(imagesPath.get(currentPosition).lastIndexOf("."));

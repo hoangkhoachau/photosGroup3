@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
         mainActivity = this;
 
+
         ActivityCompat.requestPermissions(
                 MainActivity.this,
                 new String[]{
@@ -137,16 +138,19 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.INTERNET
                 }, 1);
-
-
-        DCIM = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
-        Picture = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
-        mainImageDisplay = new ImageDisplay();
-
+        if (savedInstanceState == null) {
+            mainImageDisplay = new ImageDisplay();
+        }
+        else{
+            mainImageDisplay =(ImageDisplay) getSupportFragmentManager().getFragment(savedInstanceState, "f0");
+        }
         AlbumsFragment.getInstance();
         arrFrag[0] = mainImageDisplay;
         arrFrag[1] = AlbumHostingFragment.getInstance();
         arrFrag[2] = SearchFragment.getInstance();
+
+        DCIM = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
+        Picture = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
 
         initView();
         viewPagerAdapter viewPagerAdapter = new viewPagerAdapter(this, Arrays.asList(arrFrag));
@@ -155,8 +159,6 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-
-                // Update the button status based on the selected page
                 updateButtonStatus(position);
             }
         });
@@ -175,6 +177,17 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         setCurrentDirectory(Picture);
         setSupportActionBar(toolbar);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        getSupportFragmentManager().putFragment(savedInstanceState, "f0", arrFrag[0]);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @SuppressLint("SetWorldReadable")

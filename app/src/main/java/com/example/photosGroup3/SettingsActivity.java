@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,14 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingsActivity#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SettingsActivity extends Activity {
 
     boolean isPasswordSet = false;
@@ -39,22 +36,24 @@ public class SettingsActivity extends Activity {
     }
 
 
-    public static SettingsActivity newInstance(String param1, String param2) {
-        SettingsActivity fragment = new SettingsActivity();
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        boolean status = MainActivity.mainActivity.getIsDark();
+        if (status) {
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_settings);
         privateAlbum = findViewById(R.id.album_private);
         changeDark = findViewById(R.id.switchDarkmode);
 
-        boolean status = MainActivity.mainActivity.getIsDark();
         changeDark.setChecked(status);
         changeDark.setOnCheckedChangeListener((compoundButton, isDark) -> {
             MainActivity.mainActivity.setIsDark(isDark);
+            new Handler().postDelayed(() -> recreate(), 100);
         });
 
         privateAlbum.setOnClickListener(view1 -> {

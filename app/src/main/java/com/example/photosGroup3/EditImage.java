@@ -62,12 +62,15 @@ public class EditImage extends AppCompatActivity implements EditImageCallbacks{
         setContentView(R.layout.activity_edit_image);
         initView();
         edit_confirm.setOnClickListener(view -> {
-//            String[] temp = new String[1];
-//            temp[0] = ImageDelete.saveImage(editedImage, imgName);
-            ImageDelete.overwriteImage(editedImage, imgName);
-//            Intent intent = new Intent(getApplicationContext(), SelectedPicture.class);
-//            intent.putExtra("imgPath", temp[0]);
+            ArrayList<String> temp = new ArrayList<>();
+            temp.add( ImageDelete.saveImage(editedImage, imgName));
+            MainActivity.mainActivity.addImageUpdate(temp.toArray(new String[0]));
+            Intent intent = new Intent(getApplicationContext(), SelectedPicture.class);
+            intent.putExtra("images", temp);
+            intent.putExtra("pos", 0);
 //            setResult(RESULT_OK, intent);
+            MainActivity.mainImageDisplay.notifyChangeGridLayout();
+            startActivity(intent);
             finish();
         });
         edit_reset.setOnClickListener(view -> {

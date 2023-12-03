@@ -23,6 +23,7 @@ public class SearchFragment extends Fragment {
     SearchView searchView;
     RecyclerView recyclerView;
     ListAdapter adapter;
+    ImageDisplay imageDisplay;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -49,7 +50,7 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
-        ImageDisplay imageDisplay = MainActivity.mainImageDisplay;
+        imageDisplay = MainActivity.mainImageDisplay;
         recyclerView.setLayoutManager(new GridLayoutManager(imageDisplay.context,4));
         adapter = new ListAdapter(imageDisplay, imageDisplay.images,true,getContext());
         recyclerView.setAdapter(adapter);
@@ -69,5 +70,11 @@ public class SearchFragment extends Fragment {
         searchView = view.findViewById(R.id.searchView);
         recyclerView = view.findViewById(R.id.recyclerView);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        searchView.clearFocus();
     }
 }

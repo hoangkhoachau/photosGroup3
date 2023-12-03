@@ -202,7 +202,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
             //cut name
             imagesPath = intent.getStringArrayListExtra("images");
             int pos = intent.getIntExtra("pos", 0);
-            String selectedName = intent.getStringExtra("name");
+            //String selectedName = intent.getStringExtra("name");
             ArrayList<String> images = intent.getStringArrayListExtra("images");
 
 

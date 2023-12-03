@@ -358,10 +358,12 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     @Override
     public void addImageUpdate(String[] input) {
         Collections.addAll(FileInPaths, input);
+//        mainImageDisplay.notifyChangeGridLayout();
     }
 
     @Override
     public void Holding(boolean isHolding) {
+//        ImageDisplay instance = (ImageDisplay) getSupportFragmentManager().findFragmentByTag("f" + viewPager2.getCurrentItem());
         ImageDisplay instance = mainImageDisplay;
         if (isHolding) {
             chooseNavbar.setVisibility(View.VISIBLE);
@@ -420,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         }
         return chooseToDeleteInList;
     }
+
 
 
     public class ReadFolderTask extends AsyncTask<String, Void, Void> {

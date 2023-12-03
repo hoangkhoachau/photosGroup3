@@ -31,8 +31,10 @@ import com.example.photosGroup3.Utils.ImageDelete;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -448,16 +450,19 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
         customDialog.setContentView(R.layout.infomation_picture_dialog);
         Objects.requireNonNull(customDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-//
+        // Định dạng ngày giờ theo "HH:mm dd/MM/yyyy"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
+        String formattedDate = dateFormat.format(lastModDate);
+
         ((TextView) customDialog.findViewById(R.id.photoName))
                 .setText(shortenName(ImageDisplay.getDisplayName(imagesPath.get(currentPosition))));
         ((TextView) customDialog.findViewById(R.id.photoPath))
                 .setText(imagesPath.get(currentPosition));
         ((TextView) customDialog.findViewById(R.id.photoLastModified))
-                .setText(lastModDate.toString());
+                .setText(formattedDate); // Sử dụng ngày giờ đã định dạng
         ((TextView) customDialog.findViewById(R.id.photoSize))
                 .setText(Math.round((imgFile.getTotalSpace()) * 1.0 / 1024) + " KB");
-//        Toast.makeText(this, imagesSize[currentPosition]+"", Toast.LENGTH_SHORT).show();
+
         customDialog.findViewById(R.id.ok_button)
                 .setOnClickListener(view -> {
                     //donothing
@@ -465,6 +470,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
                 });
         customDialog.show();
     }
+
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void showCustomDialogBoxInRotatePicture(Bitmap rotateImage2, String imageRotated2) {

@@ -43,6 +43,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -524,5 +525,10 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
         void onLongClick();
 
         void afterLongClick();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity.onScreenImageDisplay=this;
     }
 }

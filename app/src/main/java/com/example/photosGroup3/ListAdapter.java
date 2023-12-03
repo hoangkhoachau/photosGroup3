@@ -126,7 +126,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
                 context.startActivity(intent);
             });
             itemView.setOnLongClickListener(view -> {
-                        ImageDisplay imageDisplay = ((MainActivity) context).mainImageDisplay;
                         imageDisplay.isHolding = true;
                         ((MainActivity) context).Holding(true);
                         String selectedName = imageDisplay.images.get(getAdapterPosition());

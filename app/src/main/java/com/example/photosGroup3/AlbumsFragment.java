@@ -48,7 +48,6 @@ public class AlbumsFragment extends Fragment {
     }
 
 
-    // TODO: Rename and change types and number of parameters
     public static AlbumsFragment getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new AlbumsFragment();

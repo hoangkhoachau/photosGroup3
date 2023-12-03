@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     RelativeLayout chooseNavbar;
     RelativeLayout status;
     static MainActivity mainActivity;
+    static ImageDisplay onScreenImageDisplay;
     FloatingActionButton deleteBtn;
     FloatingActionButton cancelBtn;
     FloatingActionButton selectAll;
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         Picture = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
         mainImageDisplay = new ImageDisplay();
 
+        AlbumsFragment.getInstance();
         arrFrag[0] = mainImageDisplay;
         arrFrag[1] = AlbumHostingFragment.getInstance();
         arrFrag[2] = SearchFragment.getInstance();
@@ -364,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     @Override
     public void Holding(boolean isHolding) {
 //        ImageDisplay instance = (ImageDisplay) getSupportFragmentManager().findFragmentByTag("f" + viewPager2.getCurrentItem());
-        ImageDisplay instance = mainImageDisplay;
+        ImageDisplay instance = onScreenImageDisplay;
         if (isHolding) {
             chooseNavbar.setVisibility(View.VISIBLE);
             navbar.setVisibility(View.INVISIBLE);
@@ -619,11 +621,13 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         if (viewId == R.id.deleteImageButton) {
             showCustomDialogBox();
         } else if (viewId == R.id.clear) {
-            ImageDisplay ic = mainImageDisplay;
+            ImageDisplay ic = onScreenImageDisplay;
+//            ImageDisplay ic = mainImageDisplay;
             clearChooseToDeleteInList();
             ic.clearClicked();
         } else if (viewId == R.id.selectAll) {
-            ImageDisplay ic2 = mainImageDisplay;
+//            ImageDisplay ic2 = mainImageDisplay;
+            ImageDisplay ic2 = onScreenImageDisplay;
             if (chooseToDeleteInList.size() == ic2.images.size()) {
                 chooseToDeleteInList.clear();
             } else {

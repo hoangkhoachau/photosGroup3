@@ -1,4 +1,4 @@
-package com.example.photosGroup3.Utils;
+package com.example.photosGroup3;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -7,14 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.example.photosGroup3.EditImage;
-import com.example.photosGroup3.R;
 
 public class EditTransformFragment extends Fragment {
     EditImage main;

@@ -48,6 +48,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.photosGroup3.Callback.chooseAndDelete;
 import com.example.photosGroup3.Utils.ImageUtility;
+import com.example.photosGroup3.Utils.PinchZoomItemTouchListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -201,6 +202,8 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
             gridlayoutManager = new GridLayoutManager(getContext(), 4);
         recyclerView.setLayoutManager(gridlayoutManager);
         recyclerView.setAdapter(listAdapter);
+        PinchZoomItemTouchListener pinchZoomItemTouchListener = new PinchZoomItemTouchListener(getContext(), recyclerView, gridlayoutManager);
+        recyclerView.addOnItemTouchListener(pinchZoomItemTouchListener);
 
 
 

@@ -22,6 +22,20 @@ public final class ImageDelete extends Activity {
         }
         return running;
     }
+    public static void overwriteImage(Bitmap finalBitmap, String imagePath) {
+
+        File myFile = new File(imagePath);
+
+        try {
+            FileOutputStream out = new FileOutputStream(myFile);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static String saveImage(Bitmap finalBitmap, String imagePath) {
 
         File myFile = new File(imagePath);

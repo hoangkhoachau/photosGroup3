@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -13,20 +15,27 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.photosGroup3.Callback.EditImageCallbacks;
-import com.example.photosGroup3.Utils.EditTransformFragment;
 import com.example.photosGroup3.Utils.ImageDelete;
 import com.example.photosGroup3.Utils.ImageUtility;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.callback.BitmapCropCallback;
+import com.yalantis.ucrop.model.AspectRatio;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 
-public class EditImage extends AppCompatActivity implements EditImageCallbacks {
+public class EditImage extends AppCompatActivity implements EditImageCallbacks{
 
     ImageButton edit_cancel;
     ImageButton edit_confirm;
@@ -53,11 +62,12 @@ public class EditImage extends AppCompatActivity implements EditImageCallbacks {
         setContentView(R.layout.activity_edit_image);
         initView();
         edit_confirm.setOnClickListener(view -> {
-            String[] temp = new String[1];
-            temp[0] = ImageDelete.saveImage(editedImage, imgName);
-            Intent intent = new Intent(getApplicationContext(), SelectedPicture.class);
-            intent.putExtra("imgPath", temp[0]);
-            setResult(RESULT_OK, intent);
+//            String[] temp = new String[1];
+//            temp[0] = ImageDelete.saveImage(editedImage, imgName);
+            ImageDelete.overwriteImage(editedImage, imgName);
+//            Intent intent = new Intent(getApplicationContext(), SelectedPicture.class);
+//            intent.putExtra("imgPath", temp[0]);
+//            setResult(RESULT_OK, intent);
             finish();
         });
         edit_reset.setOnClickListener(view -> {
@@ -72,13 +82,48 @@ public class EditImage extends AppCompatActivity implements EditImageCallbacks {
         edit_img.setImageBitmap(editedImage);
         edit_cancel.setOnClickListener(view -> finish());
         transform_btn.setOnClickListener(view -> {
-            linearView.setVisibility(View.INVISIBLE);
-            fragmentLayoutDisplay.setVisibility(View.VISIBLE);
-            edit_nav.setVisibility(View.GONE);
-            ft = getSupportFragmentManager().beginTransaction();
-            transformFragment = EditTransformFragment.newInstance();
-            ft.replace(R.id.fragment_function_btns, transformFragment);
-            ft.commit();
+            File tempDestination = createTempFile("cropped1");
+            File tempFile = createTempFile("input");
+            OutputStream os = null;
+            try {
+                os = new FileOutputStream(tempFile);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            editedImage.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            try {
+                os.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            AspectRatio[] aspectRatios = {
+                    new AspectRatio("Free", 0, 0),      // Free aspect ratio
+                    new AspectRatio("1:1", 1, 1),       // Square
+                    new AspectRatio("16:9", 16, 9),     // Widescreen
+                    new AspectRatio("4:3", 4, 3),       // Standard
+                    new AspectRatio("3:2", 3, 2),       // 35mm film
+                    new AspectRatio("5:4", 5, 4),       // Large format
+                    new AspectRatio("7:5", 7, 5),       // Traditional photo print
+                    new AspectRatio("9:16", 9, 16)      // Portrait video
+            };
+
+            UCrop.Options options = new UCrop.Options();
+            options.setAspectRatioOptions(0, aspectRatios[0], aspectRatios[1], aspectRatios[2], aspectRatios[3], aspectRatios[4], aspectRatios[5], aspectRatios[6], aspectRatios[7]);
+            options.setCompressionQuality(100);
+
+            UCrop.of(Uri.fromFile(tempFile), Uri.fromFile(tempDestination))
+                    /**/.withOptions(options)
+                    .withMaxResultSize(1000, 1000)
+                    .start(this); // Use requireContext() to get the fragment's context
+
+
+//            linearView.setVisibility(View.INVISIBLE);
+//            fragmentLayoutDisplay.setVisibility(View.VISIBLE);
+//            edit_nav.setVisibility(View.GONE);
+//            ft = getSupportFragmentManager().beginTransaction();
+//            transformFragment = EditTransformFragment.newInstance();
+//            ft.replace(R.id.fragment_function_btns, transformFragment);
+//            ft.commit();
         });
 
         blur_btn.setOnClickListener(view -> {
@@ -223,5 +268,36 @@ public class EditImage extends AppCompatActivity implements EditImageCallbacks {
         recreate();
     }
 
+    // Helper method to create a temporary file
+    private File createTempFile(String prefix) {
+        try {
+            return File.createTempFile(prefix, null, this.getCacheDir());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            // Get the cropped image URI
+            final Uri resultUri = UCrop.getOutput(data);
+
+            // Load the cropped image into your ImageView or do further processing
+            if (resultUri != null) {
+                editedImage = BitmapFactory.decodeFile(resultUri.getPath());
+                edit_img.setImageBitmap(editedImage);
+                // Now you have the cropped Bitmap, do something with it
+            }
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            // Handle any errors that occurred during cropping
+            final Throwable cropError = UCrop.getError(data);
+            if (cropError != null) {
+                cropError.printStackTrace();
+            }
+        }
+    }
 
 }

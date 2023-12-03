@@ -57,7 +57,8 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
     ImageButton saveBtn;
 
 
-    ImageButton deleteBtn, editBtn;
+    ImageButton deleteBtn;
+    ImageButton editBtn;
     public ImageButton rotateBtn;
 
     String currentSelectedName = null;
@@ -136,6 +137,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
             intent.putExtra("imgPath", currentSelectedName);
             someActivityResultLauncher.launch(intent);
+
 
         });
         rotateBtn = findViewById(R.id.rotateBtn);

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -193,9 +194,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
         public void bind(int position) {
             super.bind(position);
             File imgFile = new File(filteredList.get(position));
+
+            // Định dạng ngày và thời gian
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd/MM/yy");
+
+            // Lấy thời gian từ tập tin
             Date imgDate = new Date(imgFile.lastModified());
+
+            // Set text với ngày và thời gian đã định dạng
+            date.setText(sdf.format(imgDate));
             name.setText(imgFile.getName());
-            date.setText(imgDate.toString());
         }
     }
 }

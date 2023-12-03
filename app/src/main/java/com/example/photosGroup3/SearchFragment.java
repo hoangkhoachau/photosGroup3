@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment{
 
     static public SearchFragment getInstance() {
         if (instance == null) {
@@ -42,19 +42,29 @@ public class SearchFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                adapter.getFilter().filter(s);
+//                adapter.getFilter().filter(s);
+                imageDisplay.listAdapter.getFilter().filter(s);
                 return false; }
             @Override
             public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
+//                adapter.getFilter().filter(s);
+                imageDisplay.listAdapter.getFilter().filter(s);
                 return false;
             }
         });
-        imageDisplay = MainActivity.mainImageDisplay;
-        recyclerView.setLayoutManager(new GridLayoutManager(imageDisplay.context,4));
-        adapter = new ListAdapter(imageDisplay, imageDisplay.images,true,getContext());
-        recyclerView.setAdapter(adapter);
-        adapter.getFilter().filter("");
+        imageDisplay = new ImageDisplay();
+//        imageDisplay.setLongClickCallBack(this);
+//        imageDisplay.setImagesData(MainActivity.mainActivity.FileInPaths);
+//        adapter = new ListAdapter(imageDisplay, imageDisplay.images,true,getContext());
+//        imageDisplay.listAdapter = adapter;
+//        imageDisplay.recyclerView.setAdapter(adapter);
+//        adapter.getFilter().filter("");
+        getChildFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.recyclerView, imageDisplay, null)
+                .commit();
+//        imageDisplay.listAdapter.getFilter().filter("");
+//        recyclerView.setLayoutManager(new GridLayoutManager(imageDisplay.context,4));
     }
 
     @Override
@@ -68,7 +78,7 @@ public class SearchFragment extends Fragment {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.search_flagment, container, false);
         searchView = view.findViewById(R.id.searchView);
-        recyclerView = view.findViewById(R.id.recyclerView);
+//        recyclerView = view.findViewById(R.id.recyclerView);
         return view;
     }
 
@@ -76,5 +86,12 @@ public class SearchFragment extends Fragment {
     public void onResume() {
         super.onResume();
         searchView.clearFocus();
+        imageDisplay.fab_expand.setVisibility(View.GONE);
+        imageDisplay.getToolbar().setVisibility(View.GONE);
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
 }

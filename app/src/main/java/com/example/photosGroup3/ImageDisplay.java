@@ -192,6 +192,12 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
         //sortBtn = view.findViewById(R.id.sortView);
         fab_expand = view.findViewById(R.id.fab_expand);
         fab_url = view.findViewById(R.id.fab_url);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         if (listAdapter == null) {
             listAdapter = new ListAdapter(this, images,true,getContext());
@@ -226,7 +232,6 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
         //header = view.findViewById(R.id.header);
 
 
-        return view;
     }
 
     private void showInputDialogBox() {

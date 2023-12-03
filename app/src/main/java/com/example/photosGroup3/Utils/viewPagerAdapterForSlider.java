@@ -9,16 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.photosGroup3.R;
-import com.example.photosGroup3.viewPagerItem;
+import com.example.photosGroup3.SelectedViewPagerItem;
 
 import java.util.ArrayList;
 
 public class viewPagerAdapterForSlider extends RecyclerView.Adapter<viewPagerAdapterForSlider.ViewHolder> {
 
-    ArrayList<viewPagerItem> arrayItems;
+    ArrayList<SelectedViewPagerItem> arrayItems;
     SlideShow main;
 
-    public viewPagerAdapterForSlider(ArrayList<viewPagerItem> arrayItems, SlideShow main) {
+    public viewPagerAdapterForSlider(ArrayList<SelectedViewPagerItem> arrayItems, SlideShow main) {
         this.main = main;
         this.arrayItems = arrayItems;
     }
@@ -33,7 +33,7 @@ public class viewPagerAdapterForSlider extends RecyclerView.Adapter<viewPagerAda
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        viewPagerItem item = arrayItems.get(position);
+        SelectedViewPagerItem item = arrayItems.get(position);
         holder.img.setImageBitmap(item.getItemBitmap());
     }
 

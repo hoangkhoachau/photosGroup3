@@ -5,10 +5,10 @@ import android.graphics.BitmapFactory;
 
 import java.io.File;
 
-public class viewPagerItem {
+public class SelectedViewPagerItem {
     String selectedName;
     Bitmap itemBitmap = null;
-    public viewPagerItem(String selectedName) {
+    public SelectedViewPagerItem(String selectedName) {
         this.selectedName = selectedName;
 
     }

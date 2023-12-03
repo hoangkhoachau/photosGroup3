@@ -39,6 +39,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -51,8 +52,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements MainCallBack, View.OnClickListener {
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     LinearLayout navbar;
     RelativeLayout chooseNavbar;
     RelativeLayout status;
-    MainActivity mainActivity;
+    static MainActivity mainActivity;
     FloatingActionButton deleteBtn;
     FloatingActionButton cancelBtn;
     FloatingActionButton selectAll;
@@ -88,7 +89,9 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     int[] arrIcon = new int[3];
     int[] arrSelectedIcon = new int[3];
     Fragment[] arrFrag = new Fragment[3];
+    static ImageDisplay mainImageDisplay;
 
+    ViewPager2 viewPager2;
     Toolbar toolbar;
     public static String[] ImageExtensions = new String[]{
             ".jpg",
@@ -137,12 +140,24 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
         DCIM = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
         Picture = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+        mainImageDisplay = new ImageDisplay();
 
-        arrFrag[1] = AlbumsFragment.getInstance();
+        arrFrag[0] = mainImageDisplay;
+        arrFrag[1] = AlbumHostingFragment.getInstance();
         arrFrag[2] = SearchFragment.getInstance();
 
         initView();
+        viewPagerAdapter viewPagerAdapter = new viewPagerAdapter(this, Arrays.asList(arrFrag));
+        viewPager2.setAdapter(viewPagerAdapter);
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
 
+                // Update the button status based on the selected page
+                updateButtonStatus(position);
+            }
+        });
         deleteBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
         selectAll.setOnClickListener(this);
@@ -270,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
         customDialog.findViewById(R.id.confirmDelete)
                 .setOnClickListener(view -> {
-                    ImageDisplay ic = ImageDisplay.getInstance();
+                    ImageDisplay ic = mainImageDisplay;
                     String[] select = chooseToDeleteInList.toArray
                             (new String[0]);
 
@@ -299,10 +314,11 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                 readPicture.execute(Picture);
                 readDCIM.execute(DCIM);
 
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.fragment_container, ImageDisplay.newInstance(), null)
-                        .commit();
+                viewPager2.setCurrentItem(0);
+//                getSupportFragmentManager().beginTransaction()
+//                        .setReorderingAllowed(true)
+//                        .replace(R.id.viewPager, ImageDisplay.newInstance(), null)
+//                        .commit();
 
             } else {
                 finish();
@@ -322,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         for (String name : input) {
 
             FileInPaths.remove(name);
-            ImageDisplay.getInstance().removeImage(name);
+            mainImageDisplay.removeImage(name);
 
         }
 
@@ -346,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
     @Override
     public void Holding(boolean isHolding) {
-        ImageDisplay instance = ImageDisplay.getInstance();
+        ImageDisplay instance = mainImageDisplay;
         if (isHolding) {
             chooseNavbar.setVisibility(View.VISIBLE);
             navbar.setVisibility(View.INVISIBLE);
@@ -408,6 +424,11 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
     public class ReadFolderTask extends AsyncTask<String, Void, Void> {
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mainImageDisplay.notifyChangeGridLayout();
+        }
         @Override
         protected Void doInBackground(String... params) {
             String dir = params[0];
@@ -478,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                                 FileInPaths.add(Dir + "/" + newName);
                                 Toast.makeText(this, "doi xong", Toast.LENGTH_SHORT).show();
 
-                                ImageDisplay ic = ImageDisplay.getInstance();
+                                ImageDisplay ic = mainImageDisplay;
                                 ic.notifyChangeGridLayout();
                                 break;
 
@@ -584,6 +605,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         arrNavTextViews[1] = findViewById(R.id.albums_txt);
         arrNavTextViews[2] = findViewById(R.id.search_txt);
 
+        viewPager2 = findViewById(R.id.viewPager);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -594,11 +616,11 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         if (viewId == R.id.deleteImageButton) {
             showCustomDialogBox();
         } else if (viewId == R.id.clear) {
-            ImageDisplay ic = ImageDisplay.getInstance();
+            ImageDisplay ic = mainImageDisplay;
             clearChooseToDeleteInList();
             ic.clearClicked();
         } else if (viewId == R.id.selectAll) {
-            ImageDisplay ic2 = ImageDisplay.getInstance();
+            ImageDisplay ic2 = mainImageDisplay;
             if (chooseToDeleteInList.size() == ic2.images.size()) {
                 chooseToDeleteInList.clear();
             } else {
@@ -622,7 +644,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                 @Override
                 public void dismissCallback(String method) {
                     if (method.equals("remove")) {
-                        ImageDisplay ic = ImageDisplay.getInstance();
+                        ImageDisplay ic = mainImageDisplay;
                         clearChooseToDeleteInList();
                         ic.clearClicked();
                     }
@@ -636,7 +658,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
                 @Override
                 public void removedCallback(String oldImagePath, String newImagePath) {
-                    ImageDisplay.getInstance().removeImage(oldImagePath);
+                    mainImageDisplay.removeImage(oldImagePath);
                     assert AlbumsFragment.favoriteAlbum() != null;
                     AlbumsFragment.favoriteAlbum().imagePaths.add(newImagePath);
                 }
@@ -659,39 +681,31 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
             if (selectedTab != thisIndex) {
                 selectedTab = thisIndex;
 
-                if (thisIndex != 0) {
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.fragment_container, arrFrag[thisIndex], null)
-                            .commit();
-                } else {
-                    ImageDisplay.restoreINSTANCE();
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.fragment_container, ImageDisplay.newInstance(), null)
-                            .commit();
-                }
-                for (int i = 0; i < 3; i++) {
-                    if (i != thisIndex) {
-                        arrNavTextViews[i].setVisibility(View.GONE);
-
-                    }
-                    arrNavTextViews[thisIndex].setVisibility(View.VISIBLE);
-                    ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f,
-                            1.0f, 1f, 1f,
-                            Animation.RELATIVE_TO_SELF, 0,
-                            Animation.RELATIVE_TO_SELF, 0.0f);
-                    scaleAnimation.setDuration(200);
-                    scaleAnimation.setFillAfter(true);
-                    arrNavLinearLayouts[thisIndex].startAnimation(scaleAnimation);
-                }
-
-
+                viewPager2.setCurrentItem(thisIndex);
+                updateButtonStatus(thisIndex);
             }
         }
 
     }
 
+    private void updateButtonStatus(int thisIndex) {
+        if (thisIndex>=3)
+            return;
+        for (int i = 0; i < 3; i++) {
+            if (i != thisIndex) {
+                arrNavTextViews[i].setVisibility(View.GONE);
+
+            }
+            arrNavTextViews[thisIndex].setVisibility(View.VISIBLE);
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f,
+                    1.0f, 1f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0,
+                    Animation.RELATIVE_TO_SELF, 0.0f);
+            scaleAnimation.setDuration(200);
+            scaleAnimation.setFillAfter(true);
+            arrNavLinearLayouts[thisIndex].startAnimation(scaleAnimation);
+        }
+    }
     private class AlbumChoosingDialog extends Dialog {
         @SuppressLint("UseCompatLoadingForDrawables")
         public AlbumChoosingDialog(@NonNull Context context) {
@@ -721,7 +735,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                         TextView imgCount = view.findViewById(R.id.album_images_count);
                         imgCount.setText(String.format(context.getString(R.string.album_image_count), AlbumsFragment.albumList.get(i).imagePaths.size()));
                         if (method.equals("remove")) {
-                            ImageDisplay ic = ImageDisplay.getInstance();
+                            ImageDisplay ic = mainImageDisplay;
                             clearChooseToDeleteInList();
                             ic.clearClicked();
                             dismiss();
@@ -735,7 +749,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
                     @Override
                     public void removedCallback(String oldImagePath, String newImagePath) {
-                        ImageDisplay.getInstance().removeImage(oldImagePath);
+                        mainImageDisplay.removeImage(oldImagePath);
                         AlbumsFragment.albumList.get(i).imagePaths.add(newImagePath);
                     }
 

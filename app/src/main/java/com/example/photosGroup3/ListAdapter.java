@@ -126,11 +126,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
                 context.startActivity(intent);
             });
             itemView.setOnLongClickListener(view -> {
-                        ImageDisplay.getInstance().isHolding = true;
+                        ImageDisplay imageDisplay = ((MainActivity) context).mainImageDisplay;
+                        imageDisplay.isHolding = true;
                         ((MainActivity) context).Holding(true);
-                        String selectedName = ImageDisplay.getInstance().images.get(getAdapterPosition());
+                        String selectedName = imageDisplay.images.get(getAdapterPosition());
 
-                        ImageDisplay.getInstance().selectedImages = ((MainActivity) context).
+                        imageDisplay.selectedImages = ((MainActivity) context).
                                 adjustChooseToDeleteInList(selectedName, "choose");
                         ((MainActivity) context).SelectedTextChange();
 

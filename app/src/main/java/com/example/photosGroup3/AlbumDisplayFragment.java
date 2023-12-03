@@ -1,10 +1,13 @@
 package com.example.photosGroup3;
 
+import static androidx.core.view.KeyEventDispatcher.dispatchKeyEvent;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +46,7 @@ public class AlbumDisplayFragment extends Fragment implements ImageDisplay.LongC
     FloatingActionButton add_images;
     TableLayout header;
     ArrayList<String> addedPaths = new ArrayList<>();
+    ImageDisplay instance;
 
     public AlbumDisplayFragment() {
         // Required empty public constructor
@@ -69,72 +73,57 @@ public class AlbumDisplayFragment extends Fragment implements ImageDisplay.LongC
         CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_album_display, container, false);
 
         header = layout.findViewById(R.id.album_header);
-
         back_button = layout.findViewById(R.id.album_display_back);
+        album_name = layout.findViewById(R.id.album_display_name);
+        album_images_count = layout.findViewById(R.id.album_images_count3);
+        resize_button = layout.findViewById(R.id.resizeBtn);
 
         back_button.setOnClickListener(view -> {
-            if (album.name.equals(AlbumsFragment.privateAlbum)){
-                ((MainActivity) context).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new SettingsFragment(), null)
-                        .setReorderingAllowed(true)
-                        .commit();
-            } else {
-                ((MainActivity) context).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, AlbumsFragment.getInstance(), null)
-                        .setReorderingAllowed(true)
-                        .commit();
-            }
+            getFragmentManager().popBackStack();
         });
+        resize_button.setOnClickListener(view -> {
+            instance.numCol = instance.numCol % 5 + 1;
+            if (instance.numCol == 1) {
+//                    numCol=2;
+                instance.recyclerView.setAdapter(instance.listAdapter);
 
-        album_name = layout.findViewById(R.id.album_display_name);
-        album_name.setText(album.name);
-
-        album_images_count = layout.findViewById(R.id.album_images_count3);
-        album_images_count.setText(String.format(context.getString(R.string.album_image_count), album.imagePaths.size()));
-
-
+            } else if (instance.numCol == 2) {
+//                ImageDisplay.getInstance().gridView.setAdapter(ImageDisplay.getInstance().customAdapter);
+            }
+//            ImageDisplay.getInstance().gridView.setNumColumns(ImageDisplay.getInstance().numCol);
+        });
         add_images = layout.findViewById(R.id.add_image);
         add_images.setOnClickListener(view -> {
             ImageChoosingDialog dialog = new ImageChoosingDialog(context);
             dialog.show();
         });
+        album_name.setText(album.name);
+        album_images_count.setText(String.format(context.getString(R.string.album_image_count), album.imagePaths.size()));
 
 
-        ImageDisplay.changeINSTANCE();
-        ImageDisplay instance = ImageDisplay.getInstance();
+        instance = new ImageDisplay();
         instance.setImagesData(album.imagePaths);
-        ImageDisplay.getInstance().setLongClickCallBack(this);
+        instance.setLongClickCallBack(this);
 
         getChildFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.album_display_list, ImageDisplay.getInstance(), null)
+                .replace(R.id.album_display_list, instance, null)
                 .commit();
 
-        resize_button = layout.findViewById(R.id.resizeBtn);
-        resize_button.setOnClickListener(view -> {
-            ImageDisplay.getInstance().numCol = ImageDisplay.getInstance().numCol % 5 + 1;
-            if (ImageDisplay.getInstance().numCol == 1) {
-//                    numCol=2;
-                ImageDisplay.getInstance().recyclerView.setAdapter(ImageDisplay.getInstance().listAdapter);
-
-            } else if (ImageDisplay.getInstance().numCol == 2) {
-//                ImageDisplay.getInstance().gridView.setAdapter(ImageDisplay.getInstance().customAdapter);
-            }
-//            ImageDisplay.getInstance().gridView.setNumColumns(ImageDisplay.getInstance().numCol);
-        });
         return layout;
     }
 
     @Override
     public void onDestroyView() {
-        ImageDisplay.restoreINSTANCE();
+//        ImageDisplay.restoreINSTANCE();
         super.onDestroyView();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ImageDisplay.getInstance().getToolbar().setVisibility(View.GONE);
+        instance.getToolbar().setVisibility(View.GONE);
+        instance.fab_expand.setVisibility(View.GONE);
     }
 
     @Override
@@ -175,13 +164,13 @@ public class AlbumDisplayFragment extends Fragment implements ImageDisplay.LongC
 
                     @Override
                     public void copiedCallback(String newImagePath) {
-                        ImageDisplay.getInstance().addNewImage(newImagePath, 1);
+                        instance.addNewImage(newImagePath, 1);
                     }
 
                     @Override
                     public void removedCallback(String oldImagePath, String newImagePath) {
                         ((MainActivity) context).FileInPaths.remove(oldImagePath);
-                        ImageDisplay.getInstance().addNewImage(newImagePath, 1);
+                        instance.addNewImage(newImagePath, 1);
                     }
                 };
                 MoveOrCopyForDialog dialog = new MoveOrCopyForDialog(context, callBack, album, addedPaths);

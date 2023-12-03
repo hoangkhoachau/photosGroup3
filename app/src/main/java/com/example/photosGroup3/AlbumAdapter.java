@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -58,10 +59,14 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             holder.albumImagesCount.setText(String.format(context.getString(R.string.album_image_count), albumList.get(position).imagePaths.size()));
             View.OnClickListener displayAlbum = view -> {
                 int pos = holder.getBindingAdapterPosition();
-                ((MainActivity) context).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, AlbumDisplayFragment.newInstance(albumList.get(pos)), null)
+                Fragment previous=AlbumsFragment.getInstance().getFragmentManager().findFragmentById(R.id.album_hosting_fragment);
+                AlbumHostingFragment.getInstance().getFragmentManager().beginTransaction()
+                        .hide(previous)
+                        .add(R.id.album_hosting_fragment, AlbumDisplayFragment.newInstance(albumList.get(pos)), null)
                         .setReorderingAllowed(true)
+                        .addToBackStack(null)
                         .commit();
+
             };
 
             holder.itemView.setOnClickListener(displayAlbum);

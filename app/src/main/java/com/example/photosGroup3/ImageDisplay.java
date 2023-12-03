@@ -42,7 +42,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -99,37 +98,6 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
 
     Toolbar toolbar;
 
-    public static ImageDisplay getInstance() {
-        if (INSTANCE == null) {
-            synchronized (ImageDisplay.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new ImageDisplay();
-                }
-            }
-        }
-        return INSTANCE;
-    }
-
-    public static ImageDisplay newInstance() {
-        INSTANCE = new ImageDisplay();
-        return INSTANCE;
-    }
-
-    public static void changeINSTANCE() {
-        if (isMain) {
-            MAIN_INSTANCE = INSTANCE;
-            isMain = false;
-            INSTANCE = null;
-        }
-    }
-
-    public static void restoreINSTANCE() {
-        if (!isMain) {
-            INSTANCE = MAIN_INSTANCE;
-            isMain = true;
-        }
-    }
-
     public void setLongClickCallBack(LongClickCallback callback) {
         this.callback = callback;
     }
@@ -172,12 +140,8 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
             sortImage();
             notifyChangeGridLayout();
         } else if (item.getItemId() == R.id.item_setting) {
-            // Chuyển đến fragment khác (ví dụ: YourSettingsFragment)
-            SettingsFragment settingsFragment = new SettingsFragment();
-            FragmentTransaction transaction = requireFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, settingsFragment);
-            transaction.addToBackStack(null); // Để thêm fragment vào stack để có thể quay lại
-            transaction.commit();
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            startActivity(intent);
         } else if (item.getItemId() == R.id.item_view) {
             if (!isGridView) {
                 listAdapter.setGrid(true);

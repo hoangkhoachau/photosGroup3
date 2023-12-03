@@ -49,7 +49,7 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
-        ImageDisplay imageDisplay = ImageDisplay.getInstance();
+        ImageDisplay imageDisplay = MainActivity.mainImageDisplay;
         recyclerView.setLayoutManager(new GridLayoutManager(imageDisplay.context,4));
         adapter = new ListAdapter(imageDisplay, imageDisplay.images,true,getContext());
         recyclerView.setAdapter(adapter);

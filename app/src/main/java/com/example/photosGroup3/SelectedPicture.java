@@ -41,7 +41,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
 
     ViewPager2 viewPager2;
-    ArrayList<viewPagerItem> listItem;
+    ArrayList<SelectedViewPagerItem> listItem;
     ArrayList<String> imagesPath;
     LinearLayout subInfo;
     LinearLayout changeWallpaper;
@@ -63,7 +63,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
     String currentSelectedName = null;
     int currentPosition = -1;
 
-    viewPagerAdapter aa = null;
+    SelectedViewPagerAdapter aa = null;
 
     Boolean haveRotate = false;
     RelativeLayout topNav;
@@ -78,6 +78,8 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
     int totalRotate = 0;
     boolean displayNavBars = true;
     boolean displaySubBar = false;
+    MainActivity mainActivity ;
+    ImageDisplay mainImageDisplay;
 
     @SuppressLint({"ClickableViewAccessibility", "SuspiciousIndentation"})
 
@@ -92,7 +94,8 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
         viewPager2 = findViewById(R.id.main_viewPager);
 
-
+        mainActivity=MainActivity.mainActivity;
+        mainImageDisplay=mainActivity.mainImageDisplay;
         backBtn = findViewById(R.id.backButton);
         backBtn.setOnClickListener(view -> SelectedPicture.super.onBackPressed());
         saveBtn = findViewById(R.id.saveBtn);
@@ -100,14 +103,14 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
             if (rotateImage != null && imageRotated != null) {
 
                 String newImgPath = ImageDelete.saveImage(rotateImage, imageRotated);
-                ImageDisplay.getInstance().addNewImage(newImgPath, 0);
+                mainImageDisplay.addNewImage(newImgPath, 0);
                 Intent intent = new Intent();
                 setResult(2, intent);
                 finish();
 
             }
 
-            ImageDisplay.getInstance().notifyChangeGridLayout();
+            mainImageDisplay.notifyChangeGridLayout();
             rotateImage = null;
             imageRotated = null;
             haveRotate = false;
@@ -205,11 +208,11 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
             listItem = new ArrayList<>();
             for (int i = 0; i < imagesPath.size(); i++) {
-                viewPagerItem item = new viewPagerItem(imagesPath.get(i));
+                SelectedViewPagerItem item = new SelectedViewPagerItem(imagesPath.get(i));
                 listItem.add(item);
             }
             if (aa == null)
-                aa = new viewPagerAdapter(listItem, this);
+                aa = new SelectedViewPagerAdapter(listItem, this);
 
             viewPager2.setAdapter(aa);
             viewPager2.setCurrentItem(pos, false);
@@ -259,7 +262,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
                     assert get != null;
                     String imgName = get.getStringExtra("imgPath");
 
-                    ImageDisplay.getInstance().addNewImage(imgName, 0);
+                    mainImageDisplay.addNewImage(imgName, 0);
                     Intent intent = new Intent();
                     setResult(2, intent);
                     finish();
@@ -391,10 +394,9 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
         customDialog.findViewById(R.id.confirmDelete)
                 .setOnClickListener(view -> {
-                    ImageDisplay ic = ImageDisplay.getInstance();
                     ImageDelete.DeleteImage(currentSelectedName);
                     removeImageUpdate(currentSelectedName);
-                    ic.deleteClicked(currentSelectedName);
+                    mainImageDisplay.deleteClicked(currentSelectedName);
                     customDialog.dismiss();
                     onBackPressed();
 
@@ -425,10 +427,9 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
         customDialog.findViewById(R.id.confirmDelete)
                 .setOnClickListener(view -> {
-                    ImageDisplay ic = ImageDisplay.getInstance();
                     ImageDelete.DeleteImage(currentSelectedName);
                     removeImageUpdate(currentSelectedName);
-                    ic.deleteClicked(currentSelectedName);
+                    mainImageDisplay.deleteClicked(currentSelectedName);
                     customDialog.dismiss();
                 });
         customDialog.show();
@@ -495,7 +496,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
                         temp[0] = ImageDelete.saveImage(rotateImage2, imageRotated2);
 
-                        ImageDisplay.getInstance().addNewImage(temp[0], 0);
+                        mainImageDisplay.addNewImage(temp[0], 0);
 
 
                         Intent intent = new Intent();
@@ -504,7 +505,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
                     }
                     aa.notifyItemChanged(currentPosition);
-                    ImageDisplay.getInstance().notifyChangeGridLayout();
+                    mainImageDisplay.notifyChangeGridLayout();
 
                     Toast.makeText(getApplicationContext(), "Changed", Toast.LENGTH_SHORT).show();
                     customDialog.dismiss();
@@ -552,7 +553,6 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
                 });
         customDialog.findViewById(R.id.ok_button)
                 .setOnClickListener(view -> {
-                    ImageDisplay ic = ImageDisplay.getInstance();
                     EditText editText = customDialog.findViewById(R.id.editChangeFileName);
                     if (!isFileName(String.valueOf(editText.getText()))) {
                         customDialog.findViewById(R.id.errorName).setVisibility(View.VISIBLE);
@@ -567,13 +567,13 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
                         String oldImg_name = oldImg.getName();
                         File newImg = new File(imagesPath.get(currentPosition).replace(oldImg_name, newName));
 
-                        ic.removeImage(oldImg.getAbsolutePath());
+                        mainImageDisplay.removeImage(oldImg.getAbsolutePath());
                         if (oldImg.renameTo(newImg)) {
                             newImg = new File(imagesPath.get(currentPosition).replace(oldImg_name, newName));
-                            ic.addNewImage(newImg.getAbsolutePath(), 0);
+                            mainImageDisplay.addNewImage(newImg.getAbsolutePath(), 0);
                             Toast.makeText(getApplicationContext(), "Rename succeeded", Toast.LENGTH_SHORT).show();
                         } else {
-                            ic.addNewImage(oldImg.getAbsolutePath(), 0);
+                            mainImageDisplay.addNewImage(oldImg.getAbsolutePath(), 0);
                             Toast.makeText(getApplicationContext(), "Rename failed", Toast.LENGTH_SHORT).show();
                         }
                         renameImageUpdate(newName);

@@ -46,6 +46,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Utils.SlideShow" />
+        <activity android:name=".SettingsActivity" />
         <activity android:name=".EditImage" />
         <provider
             android:name="androidx.core.content.FileProvider"

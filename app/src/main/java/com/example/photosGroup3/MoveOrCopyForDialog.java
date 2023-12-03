@@ -26,7 +26,7 @@ public class MoveOrCopyForDialog extends BottomSheetDialog {
     @Override
     public void dismiss() {
         super.dismiss();
-        ImageDisplay.getInstance().listAdapter.notifyDataSetChanged();
+        MainActivity.mainImageDisplay.listAdapter.notifyDataSetChanged();
         if (callBack != null) {
             callBack.dismissCallback(method);
         }

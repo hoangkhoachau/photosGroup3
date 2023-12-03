@@ -54,8 +54,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center|start|end"
-                    android:text="@string/album_image_count"
-                    android:textColor="@android:color/primary_text_light_nodisable" />
+                    android:text="@string/album_image_count"></TextView>
 
                 <ImageButton
                     android:id="@+id/resizeBtn"

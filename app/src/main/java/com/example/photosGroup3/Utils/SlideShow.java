@@ -10,17 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.photosGroup3.R;
-import com.example.photosGroup3.viewPagerItem;
+import com.example.photosGroup3.SelectedViewPagerItem;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
 public class SlideShow extends AppCompatActivity {
     ViewPager2 viewPager2;
-    ArrayList<viewPagerItem> listItem;
+    ArrayList<SelectedViewPagerItem> listItem;
     MediaPlayer mediaPlayer;
     Runnable run;
     Handler handler;
@@ -88,9 +87,9 @@ public class SlideShow extends AppCompatActivity {
                 }
             }
 
-            listItem=new  ArrayList<viewPagerItem> ();
+            listItem=new  ArrayList<SelectedViewPagerItem> ();
             for(int i=0;i<images.length;i++){
-                viewPagerItem item = new viewPagerItem(images[i]);
+                SelectedViewPagerItem item = new SelectedViewPagerItem(images[i]);
                 listItem.add(item);
             }
 

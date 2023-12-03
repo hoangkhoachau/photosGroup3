@@ -1,15 +1,10 @@
 package com.example.photosGroup3;
 
-import static android.content.Context.MODE_PRIVATE;
-
-import static com.example.photosGroup3.AlbumsFragment.albumList;
-
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,15 +16,10 @@ import androidx.fragment.app.Fragment;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SettingsFragment#newInstance} factory method to
+ * Use the {@link SettingsActivity#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SettingsFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class SettingsActivity extends Activity {
 
     boolean isPasswordSet = false;
     String savedPass;
@@ -44,41 +34,27 @@ public class SettingsFragment extends Fragment {
 
     SwitchCompat changeDark;
 
-    public SettingsFragment() {
+    public SettingsActivity() {
         // Required empty public constructor
     }
 
 
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+    public static SettingsActivity newInstance(String param1, String param2) {
+        SettingsActivity fragment = new SettingsActivity();
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharePrf = requireContext().getSharedPreferences("AppPreferences", MODE_PRIVATE);
-        edit = sharePrf.edit();
-        isPasswordSet = sharePrf.getBoolean("pass_set", false);
-        savedPass = sharePrf.getString("password","");
-        savedNumber = sharePrf.getString("number_phone", "");
-    }
+        setContentView(R.layout.fragment_settings);
+        privateAlbum = findViewById(R.id.album_private);
+        changeDark = findViewById(R.id.switchDarkmode);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings, container, false);
-        privateAlbum = view.findViewById(R.id.album_private);
-        changeDark = view.findViewById(R.id.switchDarkmode);
-
-        boolean status = ((MainActivity) requireContext()).getIsDark();
+        boolean status = MainActivity.mainActivity.getIsDark();
         changeDark.setChecked(status);
         changeDark.setOnCheckedChangeListener((compoundButton, isDark) -> {
-            ((MainActivity) requireContext()).setIsDark(isDark);
+            MainActivity.mainActivity.setIsDark(isDark);
         });
 
         privateAlbum.setOnClickListener(view1 -> {
@@ -89,11 +65,15 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        return view;
+        sharePrf = MainActivity.mainActivity.getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        edit = sharePrf.edit();
+        isPasswordSet = sharePrf.getBoolean("pass_set", false);
+        savedPass = sharePrf.getString("password","");
+        savedNumber = sharePrf.getString("number_phone", "");
     }
 
     private void showSetPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.set_pass,null);
         Button cancelButton = dialogView.findViewById(R.id.set_pass_cancel_button);
         Button confirmButton = dialogView.findViewById(R.id.confirm_pass_button);
@@ -114,19 +94,19 @@ public class SettingsFragment extends Fragment {
             String cfpass = confirmPassword.getText().toString().trim();
             String num = numberPhone.getText().toString().trim();
             if (pass.length() < 5){
-                Toast.makeText(getContext(),"Password must have more than 4 characters", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Password must have more than 4 characters", Toast.LENGTH_SHORT).show();
             } else if (!pass.equals(cfpass)){
-                Toast.makeText(getContext(),"Please enter the correct confirm-password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Please enter the correct confirm-password", Toast.LENGTH_SHORT).show();
             } else if (num.length()!=10){
-                Toast.makeText(getContext(),"Please enter the correct your number phone", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Please enter the correct your number phone", Toast.LENGTH_SHORT).show();
             } else {
                 edit.putBoolean("pass_set", true);
                 edit.putString("password", pass);
                 edit.putString("number_phone", num);
                 edit.apply();
                 alertDialog.dismiss();
-                ((MainActivity) requireContext()).recreate();
-                Toast.makeText(getContext(), "Set password success",Toast.LENGTH_SHORT).show();
+                MainActivity.mainActivity.recreate();
+                Toast.makeText(this, "Set password success",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -134,7 +114,7 @@ public class SettingsFragment extends Fragment {
 
 
     private void showInputPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.input_pass,null);
         Button okButton = dialogView.findViewById(R.id.ok_pass_button);
         EditText password = dialogView.findViewById(R.id.enter_input_pass);
@@ -163,19 +143,20 @@ public class SettingsFragment extends Fragment {
                 showPrivateAlbum();
             } else {
                 if (dialogView.findViewById(R.id.forgot_layout).getVisibility() == View.INVISIBLE && !pass.equals(savedPass)){
-                    Toast.makeText(getContext(), "Please enter the correct password",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Please enter the correct password",Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Please enter the correct number phone",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Please enter the correct number phone",Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
     private void showPrivateAlbum(){
-        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, AlbumDisplayFragment.newInstance(albumList.get(0)), null)
-                .setReorderingAllowed(true)
-                .commit();
+        MainActivity.mainActivity.viewPager2.setCurrentItem(1);
+//        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.viewPager, AlbumDisplayFragment.newInstance(albumList.get(0)), null)
+//                .setReorderingAllowed(true)
+//                .commit();
     }
 
 

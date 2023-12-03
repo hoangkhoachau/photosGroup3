@@ -16,7 +16,7 @@ public class DownloadBR extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        ImageDisplay ic = ImageDisplay.getInstance();
+        ImageDisplay ic = MainActivity.mainImageDisplay;
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
             String[] result = new String[1];
             File kl = new File(ic.fullNameFile);

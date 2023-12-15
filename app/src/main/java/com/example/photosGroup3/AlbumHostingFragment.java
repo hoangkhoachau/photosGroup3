@@ -30,20 +30,21 @@ public class AlbumHostingFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().add(R.id.album_hosting_fragment, AlbumsFragment.getInstance()).commit();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_album_hosting, container, false);
+        View view = inflater.inflate(R.layout.fragment_album_hosting, container, false);
+        if (getChildFragmentManager().findFragmentById(R.id.album_hosting_fragment) == null) {
+            getChildFragmentManager().beginTransaction().replace(R.id.album_hosting_fragment, AlbumsFragment.getInstance()).commit();
+        }
+        return view;
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fragmentContainerView = view.findViewById(R.id.album_hosting_fragment);
-//        fragmentContainerView.setVisibility(View.GONE);
     }
 
 

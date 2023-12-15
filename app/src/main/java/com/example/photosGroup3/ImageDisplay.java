@@ -20,6 +20,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -169,20 +171,23 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        myStateInflater = inflater;
-        myStateContainer = container;
-        myStateInfo = savedInstanceState;
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_image_display, container, false);
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         toolbar = view.findViewById(R.id.toolbar1);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         assert activity != null;
         activity.setSupportActionBar(toolbar);
         ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
+        actionBar.setTitle(Html.fromHtml("<b>Photos</b>"));
+//        if (actionBar != null) {
+//            actionBar.setDisplayShowTitleEnabled(false);
+//        }
 
 
         recyclerView = view.findViewById(R.id.gridView);
@@ -192,25 +197,20 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
         //sortBtn = view.findViewById(R.id.sortView);
         fab_expand = view.findViewById(R.id.fab_expand);
         fab_url = view.findViewById(R.id.fab_url);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         if (listAdapter == null) {
             listAdapter = new ListAdapter(this, images,true,getContext());
         } else {
-            listAdapter.notifyDataSetChanged();
+            notifyChangeGridLayout();
         }
 
         if (gridlayoutManager == null)
             gridlayoutManager = new GridLayoutManager(getContext(), 4);
         recyclerView.setLayoutManager(gridlayoutManager);
         recyclerView.setAdapter(listAdapter);
-        PinchZoomItemTouchListener pinchZoomItemTouchListener = new PinchZoomItemTouchListener(getContext(), recyclerView, gridlayoutManager);
-        recyclerView.addOnItemTouchListener(pinchZoomItemTouchListener);
+//        PinchZoomItemTouchListener pinchZoomItemTouchListener = new PinchZoomItemTouchListener(getContext(), recyclerView, gridlayoutManager);
+//        recyclerView.addOnItemTouchListener(pinchZoomItemTouchListener);
+
+
 
 
 
@@ -312,11 +312,6 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
         isHolding = false;
         ((MainActivity) requireContext()).Holding(isHolding);
         notifyChangeGridLayout();
-        listAdapter.notifyDataSetChanged();
-    }
-
-    public void notifyChanged() {
-        listAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -397,7 +392,7 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
     }
 
     public void notifyChangeGridLayout() {
-        listAdapter.notifyDataSetChanged();
+        listAdapter.notifyDataSetChangedNotify();
     }
 
 
@@ -514,7 +509,7 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
             if (intf == null) {
             }
             images.add(0, imagePath);
-            notifyChanged();
+            notifyChangeGridLayout();
         }
     }
 
@@ -522,7 +517,7 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
         int index = this.images.indexOf(name);
         if (index != -1) {
             this.images.remove(index);
-            notifyChanged();
+            notifyChangeGridLayout();
         }
     }
 
@@ -535,5 +530,11 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
     public void onResume() {
         super.onResume();
         MainActivity.onScreenImageDisplay=this;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainActivity.onScreenImageDisplay=null;
     }
 }

@@ -43,6 +43,7 @@ dependencies {
     implementation ( "androidx.navigation:navigation-fragment:2.7.5" )
     implementation ( "androidx.navigation:navigation-ui:2.7.5" )
     implementation ("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.cardview:cardview:1.0.0")
 
     testImplementation ( "junit:junit:4.13.2" )
     androidTestImplementation ( "androidx.test.ext:junit:1.1.5" )
@@ -55,5 +56,11 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation ( "com.github.yalantis:ucrop:2.2.8-native" )
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.github.Spikeysanju:ZoomRecylerLayout:1.0")
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    //noinspection GradleCompatible
+    implementation ("com.android.support:recyclerview-v7:28.0.0") // Use the version that matches your library
+
+
 
 }

@@ -25,10 +25,10 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements Filterable {
 
-    private final ImageDisplay imageDisplay;
-    private final Context context;
-    private boolean isGrid;
-    private final ArrayList<String> imagePhotos;
+    final ImageDisplay imageDisplay;
+    final Context context;
+    boolean isGrid;
+    final ArrayList<String> imagePhotos;
     private ArrayList<String> filteredList;
 
     public ListAdapter(ImageDisplay imageDisplay, ArrayList<String> imagePhotos
@@ -55,6 +55,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
 
     public void setGrid(boolean isGrid) {
         this.isGrid = isGrid;
+        notifyDataSetChangedNotify();
+    }
+
+    public void notifyDataSetChangedNotify(){
         notifyDataSetChanged();
     }
 
@@ -107,7 +111,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 filteredList = (ArrayList<String>) filterResults.values;
-                notifyDataSetChanged();
+                notifyDataSetChangedNotify();
             }
         };
     }
@@ -122,7 +126,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
             check = itemView.findViewById(R.id.checkImage);
             itemView.setOnClickListener(view -> {
                 Intent intent = new Intent(context, SelectedPicture.class);
-                intent.putExtra("pos", getAdapterPosition());
+                intent.putExtra("pos", getBindingAdapterPosition());
                 intent.putExtra("images", filteredList);
                 context.startActivity(intent);
             });
@@ -177,6 +181,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
             Glide.with(imageDisplay.context)
                     .load(Uri.parse("file://" + imgFile.getAbsolutePath()))
                     .into(imageView);
+
         }
 
     }

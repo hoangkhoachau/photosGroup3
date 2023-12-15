@@ -1,24 +1,29 @@
 package com.example.photosGroup3;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.photosGroup3.Utils.ItemDecoration;
@@ -27,6 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class AlbumsFragment extends Fragment {
@@ -42,6 +48,11 @@ public class AlbumsFragment extends Fragment {
             .getAbsolutePath() + "/Glr3/Albums";
     @SuppressLint("StaticFieldLeak")
     private static AlbumsFragment INSTANCE = null;
+    boolean isPasswordSet = false;
+    String savedPass;
+    String savedNumber;
+    SharedPreferences sharePrf;
+    SharedPreferences.Editor edit;
 
     public AlbumsFragment() {
         // Required empty public constructor
@@ -64,6 +75,11 @@ public class AlbumsFragment extends Fragment {
         // get args
         context = getActivity();
         //readData();
+        sharePrf = MainActivity.mainActivity.getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        edit = sharePrf.edit();
+        isPasswordSet = sharePrf.getBoolean("pass_set", false);
+        savedPass = sharePrf.getString("password","");
+        savedNumber = sharePrf.getString("number_phone", "");
     }
 
     @Override
@@ -74,9 +90,9 @@ public class AlbumsFragment extends Fragment {
         // SAMPLE TEST
         spanColumns = 2;
         rcv_albumList = layout.findViewById(R.id.album_list);
-        rcv_albumList.setLayoutManager(new LinearLayoutManager(context));
+        rcv_albumList.setLayoutManager(new GridLayoutManager(context, 2));
         rcv_albumList.setAdapter(new AlbumAdapter(albumList, context));
-        rcv_albumList.addItemDecoration(new ItemDecoration(20, 1));
+        rcv_albumList.addItemDecoration(new ItemDecoration(20, 2));
         fab_addNewAlbum = layout.findViewById(R.id.album_fab_add);
         fab_addNewAlbum.setOnClickListener(view -> showNewFolderDialog());
         return layout;
@@ -225,4 +241,7 @@ public class AlbumsFragment extends Fragment {
         }
         return null;
     }
+
+
+
 }

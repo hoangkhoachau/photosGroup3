@@ -25,14 +25,27 @@ import java.util.Date;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 public class ListAdapterFeaturedPhotos extends ListAdapter{
-
-    public ListAdapterFeaturedPhotos(ListAdapter listAdapter) {
+    int numItems;
+    int randomFactor;
+    public ListAdapterFeaturedPhotos(ListAdapter listAdapter, int _numItems) {
         super(listAdapter.imageDisplay, listAdapter.imagePhotos, listAdapter.isGrid, listAdapter.context);
-    }
-    public ListAdapterFeaturedPhotos(ImageDisplay imageDisplay, ArrayList<String> imagePhotos, boolean isGrid, Context context) {
-        super(imageDisplay, imagePhotos, isGrid, context);
+        numItems = _numItems;
+        randomize();
     }
 
+    void randomize() {
+        regenerateRandomFactor();
+        for (int i = 0; i < numItems; i++) {
+            int randomPosition = ((i+10)*randomFactor) % imagePhotos.size();
+            String temp = imagePhotos.get(i);
+            imagePhotos.set(i, imagePhotos.get(randomPosition));
+            imagePhotos.set(randomPosition, temp);
+        }
+        notifyDataSetChangedNotify();
+    }
+    void regenerateRandomFactor() {
+        randomFactor = (int) (Math.random() * 9);
+    }
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.column_item, parent, false);

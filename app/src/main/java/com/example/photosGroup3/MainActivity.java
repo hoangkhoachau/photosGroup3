@@ -45,6 +45,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.photosGroup3.Callback.MainCallBack;
+import com.example.photosGroup3.Utils.DatabaseManager;
 import com.example.photosGroup3.Utils.ImageDelete;
 import com.example.photosGroup3.Utils.SlideShow;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         AlbumsFragment.getInstance();
         arrFrag[0] = mainImageDisplay;
         arrFrag[1] = AlbumHostingFragment.getInstance();
-        arrFrag[2] = SearchFragment.getInstance();
+        arrFrag[2] = SearchHostingFragment.getInstance();
 
         DCIM = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
         Picture = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
@@ -839,5 +840,17 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                 ImageView imageView;
             }
         }
+    }
+
+    public void analyse() {
+        ImageLabelWrapper imageLabelWrapper = ImageLabelWrapper.getInstance();
+        for (String path : FileInPaths) {
+            imageLabelWrapper.getLabels(path, null);
+        }
+    }
+
+    public void purgeDatabase() {
+        DatabaseManager dbManager = new DatabaseManager(this);
+        dbManager.purgeDatabase();
     }
 }

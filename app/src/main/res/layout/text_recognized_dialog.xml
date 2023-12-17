@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/customBackgroundSecond"
+    android:background="@drawable/rounded_corners"
+    >
+    <EditText
+        android:id="@+id/text_recognized"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:scrollbars="vertical"
+        android:textSize="20sp"
+        android:gravity="top"
+        android:padding="10dp"
+        android:background="@drawable/rounded_corners"
+        android:layout_margin="10dp"
+        />
+    <Button
+        android:id="@+id/ok_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="OK"
+        />
+
+</LinearLayout>

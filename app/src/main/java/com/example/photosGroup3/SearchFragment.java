@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,6 +38,7 @@ public class SearchFragment extends ImageDisplay {
     SearchView searchView;
     LinearLayout linearLayout;
     RecyclerView featurePhotoRecyclerView;
+    RecyclerView tagRecyclerView;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -86,11 +88,15 @@ public class SearchFragment extends ImageDisplay {
         featurePhotoRecyclerView = view.findViewById(R.id.featuresView);
         RecyclerView.LayoutManager layoutManager= new ZoomRecyclerLayout(getContext(), ZoomRecyclerLayout.HORIZONTAL, true);
         featurePhotoRecyclerView.setLayoutManager(layoutManager);
-        featurePhotoRecyclerView.setAdapter(new ListAdapterFeaturedPhotos(listAdapter));
+        featurePhotoRecyclerView.setAdapter(new ListAdapterFeaturedPhotos(listAdapter,20));
         featurePhotoRecyclerView.setOnTouchListener(new DisableViewPagerScrollOnRecyclerViewTouchListener(featurePhotoRecyclerView));
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(featurePhotoRecyclerView); // Add your recycler view here
         featurePhotoRecyclerView.setNestedScrollingEnabled(false);
+        tagRecyclerView = view.findViewById(R.id.tagsView);
+        RecyclerView.LayoutManager layoutManager1= new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        tagRecyclerView.setLayoutManager(layoutManager1);
+        tagRecyclerView.setAdapter(new TagAdapter());
     }
 
     @Override

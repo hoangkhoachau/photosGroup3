@@ -30,9 +30,18 @@
             android:id="@+id/saveBtn"
             android:layout_width="70dp"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@id/infoBtn"
+            android:layout_toStartOf="@id/ocrBtn"
             android:gravity="right"
             android:src="@drawable/ic_baseline_save_24"
+            android:theme="@style/selectedImg"
+            tools:ignore="ContentDescription,RtlHardcoded,SpeakableTextPresentCheck" />
+        <ImageButton
+            android:id="@+id/ocrBtn"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@id/infoBtn"
+            android:gravity="right"
+            android:src="@drawable/ic_baseline_ocr_24"
             android:theme="@style/selectedImg"
             tools:ignore="ContentDescription,RtlHardcoded,SpeakableTextPresentCheck" />
 

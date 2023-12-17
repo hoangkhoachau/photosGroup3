@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,12 +22,22 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.photosGroup3.Callback.ISelectedPicture;
+import com.example.photosGroup3.Callback.updateCallBack;
 import com.example.photosGroup3.Utils.ImageDelete;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,6 +68,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
     ImageButton moreBtn;
 
     ImageButton saveBtn;
+    ImageButton ocrBtn;
 
 
     ImageButton deleteBtn;
@@ -81,8 +93,9 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
     int totalRotate = 0;
     boolean displayNavBars = true;
     boolean displaySubBar = false;
-    MainActivity mainActivity ;
+    MainActivity mainActivity;
     ImageDisplay mainImageDisplay;
+    TextRecognizer recognizer;
 
     @SuppressLint({"ClickableViewAccessibility", "SuspiciousIndentation"})
 
@@ -97,11 +110,55 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
         viewPager2 = findViewById(R.id.main_viewPager);
 
-        mainActivity=MainActivity.mainActivity;
-        mainImageDisplay=mainActivity.mainImageDisplay;
+        mainActivity = MainActivity.mainActivity;
+        mainImageDisplay = mainActivity.mainImageDisplay;
         backBtn = findViewById(R.id.backButton);
         backBtn.setOnClickListener(view -> SelectedPicture.super.onBackPressed());
         saveBtn = findViewById(R.id.saveBtn);
+        recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+        ocrBtn = findViewById(R.id.ocrBtn);
+        ocrBtn.setOnClickListener(view -> {
+            InputImage image = null;
+            try {
+                image = InputImage.fromFilePath(this, Uri.fromFile(new File(currentSelectedName)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Task<Text> result =
+                    recognizer.process(image)
+                            .addOnSuccessListener(new OnSuccessListener<Text>() {
+                                @Override
+                                public void onSuccess(Text visionText) {
+                                    String resultText = visionText.getText();
+                                    if (resultText.isEmpty()) {
+                                        Toast.makeText(getApplicationContext(), "No text found", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_SHORT).show();
+                                    //Show dialog that allow user to copy text
+                                    final Dialog customDialog = new Dialog(SelectedPicture.this);
+                                    customDialog.setTitle("Text Recognized");
+                                    customDialog.setContentView(R.layout.text_recognized_dialog);
+                                    Objects.requireNonNull(customDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                    ((TextView) customDialog.findViewById(R.id.text_recognized)).setText(resultText);
+                                    customDialog.findViewById(R.id.ok_button)
+                                            .setOnClickListener(view -> {
+                                                //donothing
+                                                customDialog.dismiss();
+                                            });
+                                    customDialog.show();
+
+                                }
+                            })
+                            .addOnFailureListener(
+                                    new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getApplicationContext(), "Failed to recognize text!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+        });
         saveBtn.setOnClickListener(view -> {
             if (rotateImage != null && imageRotated != null) {
 
@@ -439,10 +496,33 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
         customDialog.show();
     }
 
+    private class CustomDialog extends Dialog implements updateCallBack {
+        public CustomDialog(@NonNull Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onSuccessLabeling(ArrayList<String> listTags) {
+            String tags = "";
+            if (listTags.size() == 0) {
+                tags = "No tags";
+            } else
+                for (int i = 0; i < listTags.size(); i++) {
+                    tags += "#" + listTags.get(i);
+                    if (i != listTags.size() - 1) {
+                        tags += ", ";
+                    }
+                }
+            ((TextView) findViewById(R.id.photoTags))
+                    .setText(tags);
+
+        }
+
+    }
 
     @SuppressLint("SetTextI18n")
     private void showCustomDialogBoxInformation() {
-        final Dialog customDialog = new Dialog(this);
+        Dialog customDialog = new CustomDialog(this);
         File imgFile = new File(imagesPath.get(currentPosition));
         Date lastModDate = new Date(imgFile.lastModified());
         customDialog.setTitle("Information of Picture");
@@ -454,6 +534,9 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());
         String formattedDate = dateFormat.format(lastModDate);
 
+        ArrayList<String> listTags = ImageLabelWrapper.getInstance().getLabels(imagesPath.get(currentPosition), (updateCallBack) customDialog);
+        ((TextView) customDialog.findViewById(R.id.photoTags))
+                .setText("Loading...");
         ((TextView) customDialog.findViewById(R.id.photoName))
                 .setText(shortenName(ImageDisplay.getDisplayName(imagesPath.get(currentPosition))));
         ((TextView) customDialog.findViewById(R.id.photoPath))

@@ -24,12 +24,12 @@ public class SettingsActivity extends Activity {
 
     // TODO: Rename and change types of parameters
 
-    LinearLayout privateAlbum;
-
     SharedPreferences sharePrf;
     SharedPreferences.Editor edit;
 
     SwitchCompat changeDark;
+    Button reAnalyse;
+    Button analyse;
 
     public SettingsActivity() {
         // Required empty public constructor
@@ -47,8 +47,8 @@ AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_settings);
-        privateAlbum = findViewById(R.id.album_private);
-        privateAlbum.setVisibility(View.GONE);
+        reAnalyse = findViewById(R.id.reanalyze);
+        analyse = findViewById(R.id.analyze);
         changeDark = findViewById(R.id.switchDarkmode);
 
         changeDark.setChecked(status);
@@ -56,22 +56,17 @@ AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             MainActivity.mainActivity.setIsDark(isDark);
             new Handler().postDelayed(() -> recreate(), 100);
         });
-
-        sharePrf = MainActivity.mainActivity.getSharedPreferences("AppPreferences", MODE_PRIVATE);
-        edit = sharePrf.edit();
-        isPasswordSet = sharePrf.getBoolean("pass_set", false);
-        savedPass = sharePrf.getString("password","");
-        savedNumber = sharePrf.getString("number_phone", "");
+        reAnalyse.setOnClickListener(view -> {
+            MainActivity.mainActivity.purgeDatabase();
+            MainActivity.mainActivity.analyse();
+            Toast.makeText(this, "Reanalysing...", Toast.LENGTH_SHORT).show();
+        });
+        analyse.setOnClickListener(view -> {
+            MainActivity.mainActivity.analyse();
+            Toast.makeText(this, "Analysing...", Toast.LENGTH_SHORT).show();
+        });
     }
 
-
-    private void showPrivateAlbum(){
-        MainActivity.mainActivity.viewPager2.setCurrentItem(1);
-//        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.viewPager, AlbumDisplayFragment.newInstance(albumList.get(0)), null)
-//                .setReorderingAllowed(true)
-//                .commit();
-    }
 
 
 }

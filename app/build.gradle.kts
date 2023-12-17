@@ -30,10 +30,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
+    buildFeatures {
+        mlModelBinding = true
+    }
 
 
 }
+
 
 dependencies {
     implementation ("com.google.code.gson:gson:2.8.9")
@@ -44,6 +47,8 @@ dependencies {
     implementation ( "androidx.navigation:navigation-ui:2.7.5" )
     implementation ("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
+    implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
 
     testImplementation ( "junit:junit:4.13.2" )
     androidTestImplementation ( "androidx.test.ext:junit:1.1.5" )
@@ -60,6 +65,9 @@ dependencies {
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     //noinspection GradleCompatible
     implementation ("com.android.support:recyclerview-v7:28.0.0") // Use the version that matches your library
+    implementation ( "com.google.mlkit:image-labeling:17.0.7" )
+    implementation ( "com.google.mlkit:text-recognition:16.0.0" )
+
 
 
 

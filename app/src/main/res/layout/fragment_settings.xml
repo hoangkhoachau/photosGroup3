@@ -1,84 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/customBackgroundSecond"
     tools:context=".SettingsActivity"
+    android:orientation="vertical"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="-230dp">
 
     <!-- TODO: Update blank fragment layout -->
 
 
-    <LinearLayout
-        android:id="@+id/album_private"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias="0.037">
 
-
-        <TextView
-            android:id="@+id/album_private_name"
-            android:layout_width="295dp"
-            android:layout_height="52dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="12dp"
-            android:gravity="center|start"
-            android:text="Private Album"
-
-            android:textSize="23sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/album_private_image"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
-            app:layout_constraintVertical_bias="0.059"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switchDarkmode"
+    <TextView
+        android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:padding="4dp"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView3"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toTopOf="@+id/textView3" />
+        android:fontFamily="sans-serif-black"
+        android:text="Settings"
+        android:textSize="34sp"
+        android:layout_margin="20dp"
+        tools:ignore="HardcodedText" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dark mode"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.12"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="2dp"
         tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/textView4"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchDarkmode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="sans-serif-black"
-        android:text="Settings"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        tools:ignore="HardcodedText" />
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="2dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:padding="4dp"
+        android:textSize="20sp"/>
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Analyze new images"
+        android:id="@+id/analyze"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="2dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Re Analyze all images"
+        android:id="@+id/reanalyze"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="2dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        />
+
+
+</LinearLayout>

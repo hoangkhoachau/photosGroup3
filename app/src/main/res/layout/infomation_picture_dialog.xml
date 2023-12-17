@@ -7,6 +7,7 @@
     android:layout_marginRight="20dp"
     android:layout_marginLeft="20dp"
     android:theme="@style/dBackground"
+    android:background="@drawable/rounded_corners"
     android:paddingVertical="10dp"
     >
     <TextView
@@ -24,6 +25,23 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         >
+        <TableRow>
+
+        <TextView
+            android:gravity="right"
+            android:padding="10dp"
+            android:text="Image Tags:"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,RtlHardcoded,TextSizeCheck" />
+        <TextView
+            android:textSize="15sp"
+            android:padding="5dp"
+            android:id="@+id/photoTags"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            />
+        </TableRow>
         <TableRow>
 
             <TextView

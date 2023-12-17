@@ -53,6 +53,10 @@ import com.example.photosGroup3.Callback.chooseAndDelete;
 import com.example.photosGroup3.Utils.ImageUtility;
 import com.example.photosGroup3.Utils.PinchZoomItemTouchListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.mlkit.vision.label.ImageLabeler;
+import com.google.mlkit.vision.label.ImageLabeling;
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

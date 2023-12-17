@@ -18,10 +18,6 @@ import androidx.fragment.app.Fragment;
 
 public class SettingsActivity extends Activity {
 
-    boolean isPasswordSet = false;
-    String savedPass;
-    String savedNumber;
-
     // TODO: Rename and change types of parameters
 
     SharedPreferences sharePrf;
@@ -38,7 +34,9 @@ public class SettingsActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        boolean status = MainActivity.mainActivity.getIsDark();
+        sharePrf = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        edit = sharePrf.edit();
+        boolean status = sharePrf.getBoolean("darkmode", false);
         if (status) {
 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {

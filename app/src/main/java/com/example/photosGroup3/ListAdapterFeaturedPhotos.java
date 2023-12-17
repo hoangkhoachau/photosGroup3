@@ -39,7 +39,7 @@ public class ListAdapterFeaturedPhotos extends ListAdapter{
         regenerateRandomFactor();
         imagePhotos.clear();
         for (int i = 0; i < numItems; i++) {
-            imagePhotos.add(listAdapter.imagePhotos.get((i + randomFactor) % listAdapter.getItemCount()));
+            imagePhotos.add(listAdapter.imagePhotos.get((i + randomFactor) % listAdapter.imagePhotos.size()));
         }
         notifyDataSetChangedNotify();
     }

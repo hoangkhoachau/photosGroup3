@@ -129,11 +129,23 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
                             .addOnSuccessListener(new OnSuccessListener<Text>() {
                                 @Override
                                 public void onSuccess(Text visionText) {
-                                    String resultText = visionText.getText();
+                                    String resultText = "";
+                                    for (Text.TextBlock block : visionText.getTextBlocks()) {
+                                        String blockText = block.getText();
+                                        for (Text.Line line : block.getLines()) {
+                                            String lineText = line.getText();
+                                            for (Text.Element element : line.getElements()) {
+                                                String elementText = element.getText();
+                                                resultText += elementText + " ";
+                                            }
+                                            resultText += "\n";
+                                        }
+                                    }
                                     if (resultText.isEmpty()) {
                                         Toast.makeText(getApplicationContext(), "No text found", Toast.LENGTH_SHORT).show();
                                         return;
                                     }
+                                    resultText = resultText.substring(0, resultText.length() - 1);
                                     Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_SHORT).show();
                                     //Show dialog that allow user to copy text
                                     final Dialog customDialog = new Dialog(SelectedPicture.this);
@@ -141,6 +153,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
                                     customDialog.setContentView(R.layout.text_recognized_dialog);
                                     Objects.requireNonNull(customDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                     ((TextView) customDialog.findViewById(R.id.text_recognized)).setText(resultText);
+                                    ((TextView) customDialog.findViewById(R.id.text_recognized)).setSingleLine(false);
                                     customDialog.findViewById(R.id.ok_button)
                                             .setOnClickListener(view -> {
                                                 //donothing

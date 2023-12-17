@@ -12,12 +12,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.photosGroup3.Callback.tagAdapterCallback;
 import com.example.photosGroup3.Utils.DatabaseManager;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
+public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> implements tagAdapterCallback {
 
     DatabaseManager dbManager;
     Cursor cursor;
@@ -30,7 +31,18 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
         while (cursor.moveToNext()) {
             labels.add(cursor.getString(1));
         }
+        dbManager.addCallback(this);
     }
+
+    public void update() {
+        cursor = dbManager.getAllLabels();
+        labels = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            labels.add(cursor.getString(1));
+        }
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -59,7 +71,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
 
         public void bind(int position) {
             Cursor cursor = dbManager.getImagesForLabel(labels.get(position));
-            cursor.moveToNext();
+            cursor.moveToLast();
             String path = cursor.getString(1);
             Glide.with(MainActivity.mainActivity).load(new File(path)).into(imageView);
             textView.setText(labels.get(position));

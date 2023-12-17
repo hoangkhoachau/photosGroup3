@@ -17,12 +17,12 @@ public class DBHelper extends SQLiteOpenHelper {
         // Create the labels table
         db.execSQL("CREATE TABLE IF NOT EXISTS labels ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "label TEXT)");
+                + "label TEXT UNIQUE)");
 
         // Create the images table
         db.execSQL("CREATE TABLE IF NOT EXISTS images ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "image_path TEXT)");
+                + "image_path TEXT UNIQUE)");
 
         // Create the label_image junction table
         db.execSQL("CREATE TABLE IF NOT EXISTS label_image ("

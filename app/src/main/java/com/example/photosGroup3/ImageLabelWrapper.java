@@ -51,7 +51,8 @@ public class ImageLabelWrapper {
                     while (cursor.moveToNext()) {
                         labels.add(cursor.getString(1));
                     }
-                    callback.onSuccessLabeling(labels);
+                    if (callback!=null)
+                        callback.onSuccessLabeling(labels);
                     return labels;
                 }
         ArrayList<String> labels = new ArrayList<>();

@@ -5,8 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.photosGroup3.Callback.tagAdapterCallback;
+
+import java.util.ArrayList;
+
 public class DatabaseManager {
     private DBHelper dbHelper;
+    private ArrayList<tagAdapterCallback> callbacks=new ArrayList<>();
 
     public DatabaseManager(Context context) {
         dbHelper = new DBHelper(context);
@@ -21,6 +26,7 @@ public class DatabaseManager {
         long rowId = db.insert("labels", null, values);
         db.close();
 
+        callbacks.forEach(tagAdapterCallback::update);
         return rowId;
     }
 
@@ -128,6 +134,7 @@ public class DatabaseManager {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("labels", "label = ?", new String[]{label});
         db.close();
+        callbacks.forEach(tagAdapterCallback::update);
     }
     public void deleteImage(String imagePath) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -141,6 +148,11 @@ public class DatabaseManager {
         db.execSQL("DELETE FROM images");
         db.execSQL("DELETE FROM label_image");
         db.close();
+        callbacks.forEach(tagAdapterCallback::update);
+    }
+
+    public void addCallback(tagAdapterCallback callback) {
+        callbacks.add(callback);
     }
 }
 

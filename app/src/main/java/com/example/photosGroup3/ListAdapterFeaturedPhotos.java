@@ -27,19 +27,19 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 public class ListAdapterFeaturedPhotos extends ListAdapter{
     int numItems;
     int randomFactor;
+    ListAdapter listAdapter;
     public ListAdapterFeaturedPhotos(ListAdapter listAdapter, int _numItems) {
-        super(listAdapter.imageDisplay, listAdapter.imagePhotos, listAdapter.isGrid, listAdapter.context);
+        super(listAdapter.imageDisplay, new ArrayList<String>(), listAdapter.isGrid, listAdapter.context);
+        this.listAdapter = listAdapter;
         numItems = _numItems;
         randomize();
     }
 
     void randomize() {
         regenerateRandomFactor();
+        imagePhotos.clear();
         for (int i = 0; i < numItems; i++) {
-            int randomPosition = ((i+10)*randomFactor) % imagePhotos.size();
-            String temp = imagePhotos.get(i);
-            imagePhotos.set(i, imagePhotos.get(randomPosition));
-            imagePhotos.set(randomPosition, temp);
+            imagePhotos.add(listAdapter.imagePhotos.get((i + randomFactor) % listAdapter.getItemCount()));
         }
         notifyDataSetChangedNotify();
     }

@@ -25,12 +25,13 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements Filterable {
 
-    final ImageDisplay imageDisplay;
-    final Context context;
+    ImageDisplay imageDisplay;
+    Context context;
     boolean isGrid;
-    final ArrayList<String> imagePhotos;
+    ArrayList<String> imagePhotos;
     private ArrayList<String> filteredList;
 
+    ListAdapter(){}
     public ListAdapter(ImageDisplay imageDisplay, ArrayList<String> imagePhotos
             , boolean isGrid, Context context) {
         this.imageDisplay = imageDisplay;

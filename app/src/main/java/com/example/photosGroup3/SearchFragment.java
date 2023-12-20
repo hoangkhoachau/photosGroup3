@@ -39,6 +39,7 @@ public class SearchFragment extends ImageDisplay {
     LinearLayout linearLayout;
     RecyclerView featurePhotoRecyclerView;
     RecyclerView tagRecyclerView;
+    boolean isSearch = false;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -51,6 +52,7 @@ public class SearchFragment extends ImageDisplay {
         linearLayout = view.findViewById(R.id.tagsAndFeaturesView);
         searchView = view.findViewById(R.id.searchView);
         searchView.setIconifiedByDefault(false);
+
         searchView.setQueryHint("Search...");
         fab_expand.setVisibility(View.GONE);
         toolbar.setTitle("");
@@ -58,7 +60,7 @@ public class SearchFragment extends ImageDisplay {
                 new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                        if (hasFocus) {
+                        if (hasFocus || isSearch) {
                             linearLayout.setVisibility(View.GONE);
                         }
                         else {
@@ -77,8 +79,10 @@ public class SearchFragment extends ImageDisplay {
             @Override
             public boolean onQueryTextChange(String s) {
                 if (s.isEmpty()) {
+                    isSearch = false;
                     recyclerView.setVisibility(View.GONE);
                 } else {
+                    isSearch = true;
                     recyclerView.setVisibility(View.VISIBLE);
                 }
                 listAdapter.getFilter().filter(s);

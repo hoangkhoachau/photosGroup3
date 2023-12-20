@@ -75,7 +75,7 @@ public class AlbumsFragment extends Fragment {
         // get args
         context = getActivity();
         //readData();
-        sharePrf = MainActivity.mainActivity.getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        sharePrf = getContext().getSharedPreferences("AppPreferences", MODE_PRIVATE);
         edit = sharePrf.edit();
         isPasswordSet = sharePrf.getBoolean("pass_set", false);
         savedPass = sharePrf.getString("password","");

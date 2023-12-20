@@ -29,7 +29,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
     Context context;
     boolean isGrid;
     ArrayList<String> imagePhotos;
-    private ArrayList<String> filteredList;
+    ArrayList<String> filteredList;
 
     ListAdapter(){}
     public ListAdapter(ImageDisplay imageDisplay, ArrayList<String> imagePhotos
@@ -134,7 +134,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> im
             itemView.setOnLongClickListener(view -> {
                         imageDisplay.isHolding = true;
                         ((MainActivity) context).Holding(true);
-                        String selectedName = imageDisplay.images.get(getAdapterPosition());
+                        String selectedName = filteredList.get(getAdapterPosition());
 
                         imageDisplay.selectedImages = ((MainActivity) context).
                                 adjustChooseToDeleteInList(selectedName, "choose");

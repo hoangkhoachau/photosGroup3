@@ -642,10 +642,10 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         } else if (viewId == R.id.selectAll) {
 //            ImageDisplay ic2 = mainImageDisplay;
             ImageDisplay ic2 = onScreenImageDisplay;
-            if (chooseToDeleteInList.size() == ic2.images.size()) {
+            if (chooseToDeleteInList.size() == ic2.listAdapter.filteredList.size()) {
                 chooseToDeleteInList.clear();
             } else {
-                chooseToDeleteInList = new ArrayList<>(ic2.images);
+                chooseToDeleteInList = new ArrayList<>(ic2.listAdapter.filteredList);
             }
             ic2.selectAllClicked();
         } else if (viewId == R.id.createSliderBtn) {

@@ -52,7 +52,7 @@ AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         changeDark.setChecked(status);
         changeDark.setOnCheckedChangeListener((compoundButton, isDark) -> {
             MainActivity.mainActivity.setIsDark(isDark);
-            new Handler().postDelayed(() -> recreate(), 100);
+            recreate();
         });
         reAnalyse.setOnClickListener(view -> {
             MainActivity.mainActivity.purgeDatabase();

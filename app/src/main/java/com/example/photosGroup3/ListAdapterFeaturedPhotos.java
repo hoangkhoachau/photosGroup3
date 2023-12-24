@@ -47,7 +47,7 @@ public class ListAdapterFeaturedPhotos extends ListAdapter{
         notifyDataSetChangedNotify();
     }
     void regenerateRandomFactor() {
-        randomFactor = (int) (Math.random() * 9);
+        randomFactor = (int) Math.abs(Math.random());
     }
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

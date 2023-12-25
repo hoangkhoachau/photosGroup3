@@ -42,7 +42,9 @@ public class ListAdapterFeaturedPhotos extends ListAdapter{
         if (size != 0) {
             for (int i = 0; i < numItems; i++) {
                 int idx = (i*randomFactor*100) % size;
-                imagePhotos.add(listAdapter.imagePhotos.get(idx));
+                if (idx >= 0 && idx < size) {
+                    imagePhotos.add(listAdapter.imagePhotos.get(idx));
+                }
             }
         }
         notifyDataSetChangedNotify();

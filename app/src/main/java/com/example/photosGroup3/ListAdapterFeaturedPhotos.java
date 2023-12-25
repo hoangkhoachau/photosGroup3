@@ -41,16 +41,14 @@ public class ListAdapterFeaturedPhotos extends ListAdapter{
         int size = listAdapter.imagePhotos.size();
         if (size != 0) {
             for (int i = 0; i < numItems; i++) {
-                int idx = (i + randomFactor) % size;
-                if (idx >= 0 && idx < size) {
-                    imagePhotos.add(listAdapter.imagePhotos.get(idx));
-                }
+                int idx = (i*randomFactor*100) % size;
+                imagePhotos.add(listAdapter.imagePhotos.get(idx));
             }
         }
         notifyDataSetChangedNotify();
     }
     void regenerateRandomFactor() {
-        randomFactor = (int) (Math.abs(Math.random()) + 1);
+        randomFactor = (int)(Math.random()*100);
     }
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

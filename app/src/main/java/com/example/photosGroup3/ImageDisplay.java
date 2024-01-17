@@ -525,6 +525,16 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
         }
     }
 
+    public void removeImage(String[] name){
+        for (String s : name) {
+            int index = this.images.indexOf(s);
+            if (index != -1) {
+                this.images.remove(index);
+            }
+        }
+        notifyChangeGridLayout();
+    }
+
     public interface LongClickCallback {
         void onLongClick();
 

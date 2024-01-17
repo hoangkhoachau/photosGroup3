@@ -89,6 +89,10 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
                 holder.imageView.setImageResource(R.drawable.ic_lock_lock);
                 holder.albumImagesCount.setText("");
                 holder.itemView.setOnClickListener(privateAlbum);
+            }  else if (albumList.get(position).name.equals(AlbumsFragment.trash)) {
+                holder.imageView.setImageResource(R.drawable.ic_baseline_delete_white_24);
+                holder.itemView.setOnClickListener(displayAlbum);
+                holder.albumImagesCount.setText(String.format(context.getString(R.string.album_image_count), albumList.get(position).imagePaths.size()));
             }
             else{
             if (albumList.get(position).imagePaths.size() != 0) {

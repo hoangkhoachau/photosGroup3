@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     FloatingActionButton shareMultipleBtn;
     FloatingActionButton addToAlbumBtn;
     FloatingActionButton addToFavoriteBtn;
+    FloatingActionButton restoreBtn;
     TextView informationSelected;
     String deleteNotify = "";
     boolean isDark;
@@ -170,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         shareMultipleBtn.setOnClickListener(this);
         addToAlbumBtn.setOnClickListener(this);
         addToFavoriteBtn.setOnClickListener(this);
+        restoreBtn.setOnClickListener(this);
 
         arrNavLinearLayouts[0].setOnClickListener(new NavLinearLayouts(0));
         arrNavLinearLayouts[1].setOnClickListener(new NavLinearLayouts(1));
@@ -294,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                 setBackgroundDrawable(getDrawable(R.drawable.custom_dialog_bg));
 
         ((TextView) customDialog.findViewById(R.id.deleteNotify))
-                .setText("Do you want to delete " + deleteNotify + " image(s) permanently in your device ?");
+                .setText("Do you want to delete " + deleteNotify + " image(s)?");
 
         customDialog.findViewById(R.id.cancel_delete)
                 .setOnClickListener(view -> customDialog.dismiss());
@@ -307,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
 
                     removeImageUpdate(select);
-                    ImageDelete.DeleteImage(select);
+                    //ImageDelete.DeleteImage(select);
                     clearChooseToDeleteInList();
                     ic.deleteClicked();
                     customDialog.dismiss();
@@ -352,17 +354,26 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
     @Override
     public void removeImageUpdate(String[] input) {
         for (String name : input) {
-
-            FileInPaths.remove(name);
-            mainImageDisplay.removeImage(name);
-
+            //check if image is not in trash
+            if (!AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.contains(name)) {
+                AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.add(name);
+                mainImageDisplay.removeImage(name);
+                String folderPath = AlbumsFragment.folderPath + "/" + "Trash";
+                String newFileName = MoveOrCopyForDialog.moveFile(name, folderPath);
+            }
+            else {
+                FileInPaths.remove(name);
+                mainImageDisplay.removeImage(name);
+                File file = new File(name);
+                file.delete();
+            }
         }
 
     }
 
     @Override
     public void removeImageUpdate(String input) {
-        FileInPaths.remove(input);
+        removeImageUpdate(new String[]{input});
     }
 
     @Override
@@ -387,6 +398,20 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
             status.setVisibility(View.VISIBLE);
             if (instance.callback != null) {
                 instance.callback.onLongClick();
+            }
+            // if this is holding in the trash
+            if (AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.contains(instance.images.get(0))) {
+                addToAlbumBtn.setVisibility(View.GONE);
+                addToFavoriteBtn.setVisibility(View.GONE);
+                shareMultipleBtn.setVisibility(View.GONE);
+                createSliderBtn.setVisibility(View.GONE);
+                restoreBtn.setVisibility(View.VISIBLE);
+            } else {
+                addToAlbumBtn.setVisibility(View.VISIBLE);
+                addToFavoriteBtn.setVisibility(View.VISIBLE);
+                shareMultipleBtn.setVisibility(View.VISIBLE);
+                createSliderBtn.setVisibility(View.VISIBLE);
+                restoreBtn.setVisibility(View.GONE);
             }
         } else {
             chooseNavbar.setVisibility(View.INVISIBLE);
@@ -600,6 +625,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         shareMultipleBtn = findViewById(R.id.shareMultipleBtn);
         addToAlbumBtn = findViewById(R.id.addToAlbumBtn);
         addToFavoriteBtn = findViewById(R.id.addToFavoriteBtn);
+        restoreBtn = findViewById(R.id.restoreBtn);
         informationSelected = findViewById(R.id.infomationText);
 
 
@@ -685,6 +711,10 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                 }
             }, AlbumsFragment.favoriteAlbum(), chooseToDeleteInList());
             moveOrCopyForDialogDialog.show();
+        }
+        else if (viewId == R.id.restoreBtn) {
+            for (int i = 0; i < chooseToDeleteInList.size(); i++)
+                MoveOrCopyForDialog.moveFile(chooseToDeleteInList.get(i), getDCIMDirectory());
         }
     }
 

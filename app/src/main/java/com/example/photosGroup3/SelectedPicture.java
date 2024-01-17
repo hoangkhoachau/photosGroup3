@@ -468,7 +468,6 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
 
         customDialog.findViewById(R.id.confirmDelete)
                 .setOnClickListener(view -> {
-                    ImageDelete.DeleteImage(currentSelectedName);
                     removeImageUpdate(currentSelectedName);
                     mainImageDisplay.deleteClicked(currentSelectedName);
                     customDialog.dismiss();

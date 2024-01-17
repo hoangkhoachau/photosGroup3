@@ -72,7 +72,7 @@ public class MoveOrCopyForDialog extends BottomSheetDialog {
         setContentView(layout);
     }
 
-    public String moveFile(String filePath, String newFolderLocation) {
+    static public String moveFile(String filePath, String newFolderLocation) {
 
         Path from = Paths.get(filePath);
         String newFileName = ImageDisplay.generateFileName() + "." + getExtension(from.getFileName().toString());
@@ -87,7 +87,7 @@ public class MoveOrCopyForDialog extends BottomSheetDialog {
         }
     }
 
-    public String copyFile(String filePath, String newFolderLocation) {
+    static public String copyFile(String filePath, String newFolderLocation) {
 
         Path from = Paths.get(filePath);
         String newFileName = ImageDisplay.generateFileName() + "." + getExtension(from.getFileName().toString());
@@ -101,7 +101,7 @@ public class MoveOrCopyForDialog extends BottomSheetDialog {
         }
     }
 
-    public String getExtension(String file) {
+    static public String getExtension(String file) {
         String[] splits = file.split("\\.");
         return splits[splits.length - 1];
     }

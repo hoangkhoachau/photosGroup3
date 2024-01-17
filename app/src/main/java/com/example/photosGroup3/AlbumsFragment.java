@@ -41,6 +41,7 @@ public class AlbumsFragment extends Fragment {
     static ArrayList<Album> albumList;
     public static String favourite = "Favourite";
     public static String privateAlbum = "Private Album";
+    public static String trash = "Trash";
     FloatingActionButton fab_addNewAlbum;
     RecyclerView rcv_albumList;
     public static String folderPath = Environment
@@ -133,6 +134,16 @@ public class AlbumsFragment extends Fragment {
             albumList.remove(favoriteIndex);
             albumList.add(1, fav);
         }
+        int trashIndex = indexOfTrash(albumList);
+        if (trashIndex == -3) {
+            File trash = new File(path.getAbsolutePath() + "/" + AlbumsFragment.trash);
+            trash.mkdirs();
+            albumList.add(2, new Album(trash.getAbsolutePath(), trash.getName(), imagePathInFolder(trash)));
+        } else {
+            Album tra = albumList.get(trashIndex);
+            albumList.remove(trashIndex);
+            albumList.add(2, tra);
+        }
     }
 
     private static int indexOfFavorite(ArrayList<Album> list) {
@@ -151,6 +162,15 @@ public class AlbumsFragment extends Fragment {
             }
         }
         return -2;
+    }
+
+    public static int indexOfTrash(ArrayList<Album> list) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).name.equals(trash)) {
+                return i;
+            }
+        }
+        return -3;
     }
 
     private static ArrayList<String> imagePathInFolder(File folder) {

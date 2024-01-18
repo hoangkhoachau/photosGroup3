@@ -56,6 +56,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements MainCallBack, View.OnClickListener {
@@ -359,10 +360,17 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
         for (String name : input) {
             //check if image is not in trash
             if (!AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.contains(name)) {
-                AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.add(name);
-                onScreenImageDisplay.removeImage(name);
                 String folderPath = AlbumsFragment.folderPath + "/" + "Trash";
                 String newFileName = MoveOrCopyForDialog.moveFile(name, folderPath);
+                if (AlbumsFragment.getInstance().adapter != null){
+                    AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.add(newFileName);
+                    List<Fragment> albumDisplayFragmentList = AlbumHostingFragment.getInstance().getChildFragmentManager().getFragments();
+                    Fragment albumDisplayFragment = albumDisplayFragmentList.get(albumDisplayFragmentList.size() - 1);
+                    if(albumDisplayFragment instanceof AlbumDisplayFragment)
+                        ((AlbumDisplayFragment) albumDisplayFragment).instance.notifyChangeGridLayout();
+                    AlbumsFragment.getInstance().adapter.notifyDataAlbumChanged();
+                }
+                onScreenImageDisplay.removeImage(name);
             }
             else {
                 Log.e("Tpoo", "full image: " + onScreenImageDisplay.images.toString());
@@ -717,10 +725,16 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
                 }
             }, AlbumsFragment.favoriteAlbum(), chooseToDeleteInList());
             moveOrCopyForDialogDialog.show();
-        }
-        else if (viewId == R.id.restoreBtn) {
-            for (int i = 0; i < chooseToDeleteInList.size(); i++)
-                MoveOrCopyForDialog.moveFile(chooseToDeleteInList.get(i), getDCIMDirectory());
+        } else if (viewId == R.id.restoreBtn) {
+            for (int i = 0; i < chooseToDeleteInList.size(); i++){
+                AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.remove(chooseToDeleteInList.get(i));
+                onScreenImageDisplay.listAdapter.notifyDataSetChanged();
+                String newPlace=MoveOrCopyForDialog.moveFile(chooseToDeleteInList.get(i), getDCIMDirectory());
+                mainImageDisplay.addNewImage(newPlace,1);
+            }
+            AlbumsFragment.getInstance().adapter.notifyDataAlbumChanged();
+            clearChooseToDeleteInList();
+            onScreenImageDisplay.clearClicked();
         }
     }
 

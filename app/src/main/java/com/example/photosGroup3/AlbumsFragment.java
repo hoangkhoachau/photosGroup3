@@ -39,6 +39,7 @@ public class AlbumsFragment extends Fragment {
     Context context;
     int spanColumns;
     static ArrayList<Album> albumList;
+    AlbumAdapter adapter=null;
     public static String favourite = "Favourite";
     public static String privateAlbum = "Private Album";
     public static String trash = "Trash";
@@ -91,7 +92,8 @@ public class AlbumsFragment extends Fragment {
         spanColumns = 2;
         rcv_albumList = layout.findViewById(R.id.album_list);
         rcv_albumList.setLayoutManager(new GridLayoutManager(context, 2));
-        rcv_albumList.setAdapter(new AlbumAdapter(albumList, context));
+        adapter = new AlbumAdapter(albumList,context);
+        rcv_albumList.setAdapter(adapter);
         rcv_albumList.addItemDecoration(new ItemDecoration(20, 2));
         fab_addNewAlbum = layout.findViewById(R.id.album_fab_add);
         fab_addNewAlbum.setOnClickListener(view -> showNewFolderDialog());

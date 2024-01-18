@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -303,15 +304,17 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
 
         customDialog.findViewById(R.id.confirmDelete)
                 .setOnClickListener(view -> {
-                    ImageDisplay ic = mainImageDisplay;
+                    ImageDisplay ic = onScreenImageDisplay;
                     String[] select = chooseToDeleteInList.toArray
                             (new String[0]);
 
-
+                    Log.e("Tpoo", "call");
+                    Log.e("Tpoo", "select image: " + select.toString());
                     removeImageUpdate(select);
                     //ImageDelete.DeleteImage(select);
                     clearChooseToDeleteInList();
                     ic.deleteClicked();
+                    ic.notifyChangeGridLayout();
                     customDialog.dismiss();
                 });
 
@@ -357,13 +360,16 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
             //check if image is not in trash
             if (!AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.contains(name)) {
                 AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.add(name);
-                mainImageDisplay.removeImage(name);
+                onScreenImageDisplay.removeImage(name);
                 String folderPath = AlbumsFragment.folderPath + "/" + "Trash";
                 String newFileName = MoveOrCopyForDialog.moveFile(name, folderPath);
             }
             else {
+                Log.e("Tpoo", "full image: " + onScreenImageDisplay.images.toString());
+                Log.e("Tpoo", "---------------");
+                Log.e("Tpoo", "delete image: " + input.toString());
                 FileInPaths.remove(name);
-                mainImageDisplay.removeImage(name);
+                onScreenImageDisplay.removeImage(name);
                 File file = new File(name);
                 file.delete();
             }

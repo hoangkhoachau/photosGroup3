@@ -72,7 +72,6 @@ public class AlbumsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // get args
         context = getActivity();
         //readData();

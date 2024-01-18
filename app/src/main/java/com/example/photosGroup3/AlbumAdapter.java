@@ -420,4 +420,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             }
         });
     }
+    public void notifyDataAlbumChanged(){
+        notifyDataSetChanged();
+    }
 }

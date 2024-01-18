@@ -729,7 +729,8 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
             for (int i = 0; i < chooseToDeleteInList.size(); i++){
                 AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.remove(chooseToDeleteInList.get(i));
 
-                String newPlace=MoveOrCopyForDialog.moveFile(chooseToDeleteInList.get(i), getDCIMDirectory());
+                String newPlace=MoveOrCopyForDialog.moveFile(chooseToDeleteInList.get(i), getDCIMDirectory() );
+                mainImageDisplay.addNewImage(getDCIMDirectory() + "/" + newPlace,1);
                 ImageDisplay.updateAll();
             }
             AlbumsFragment.getInstance().adapter.notifyDataAlbumChanged();

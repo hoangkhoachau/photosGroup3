@@ -430,6 +430,7 @@ public class SelectedPicture extends AppCompatActivity implements ISelectedPictu
         imagesPath.set(currentPosition, imagesPath.get(currentPosition).
                 substring(0, imagesPath.get(currentPosition).
                         lastIndexOf("/") + 1) + input);
+        ImageDisplay.updateAll();
     }
 
     @Override

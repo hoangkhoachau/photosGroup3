@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 //noinspection ExifInterface
 import android.media.ExifInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class ImageDisplay extends Fragment implements chooseAndDelete {
@@ -79,6 +81,7 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
     FloatingActionButton fab_camera, fab_expand, fab_url;
     RecyclerView recyclerView;
     CardView cardView;
+    public static ArrayList<ImageDisplay> listImageDis  ;
     int numCol = 2;
     ArrayList<String> images;
     String namePictureShoot = "";
@@ -100,7 +103,25 @@ public class ImageDisplay extends Fragment implements chooseAndDelete {
     boolean isGridView = true;
 
     public ImageDisplay() {
+        if (listImageDis == null) {
+            listImageDis = new ArrayList<ImageDisplay>();
+        }
+        listImageDis.add(this );
+
     }
+//    public static ImageDisplay getInstance(){
+//
+//    }
+
+    public static void updateAll(){
+        for (int i = 0; i<listImageDis.size();i++){
+            if (listImageDis.get(i).listAdapter != null){
+                listImageDis.get(i).listAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+
 
     public Toolbar getToolbar() {
         return toolbar;

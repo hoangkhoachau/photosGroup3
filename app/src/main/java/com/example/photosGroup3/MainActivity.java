@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements MainCallBack, Vie
             //check if image is not in trash
             if (!AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.contains(name)) {
                 String folderPath = AlbumsFragment.folderPath + "/" + "Trash";
-                String newFileName = MoveOrCopyForDialog.moveFile(name, folderPath);
+                String newFileName = folderPath+"/"+MoveOrCopyForDialog.moveFile(name, folderPath);
                 if (AlbumsFragment.getInstance().adapter != null){
                     AlbumsFragment.albumList.get(AlbumsFragment.indexOfTrash(AlbumsFragment.albumList)).imagePaths.add(newFileName);
                     List<Fragment> albumDisplayFragmentList = AlbumHostingFragment.getInstance().getChildFragmentManager().getFragments();
